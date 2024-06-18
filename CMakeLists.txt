@@ -11,7 +11,7 @@ set(CMAKE_C_STANDARD 17)
 
 
 # 定义生成规则
-add_library(${ProjectName} SHARED)
+add_library(${ProjectName})
 
 # 将资源目录用预定义传给 C++ 程序
 target_compile_definitions(${ProjectName} PRIVATE TS_NO_SRT=1)
