@@ -1,10 +1,10 @@
 #pragma once
-#include<jccpp/Json.h>
-#include<string>
-#include<tsPAT.h>
-#include<tsPMT.h>
-#include<tsSDT.h>
-#include<tsTSPacket.h>
+#include <base/string/Json.h>
+#include <string>
+#include <tsPAT.h>
+#include <tsPMT.h>
+#include <tsSDT.h>
+#include <tsTSPacket.h>
 
 std::string ToString(ts::TSPacket const &packet);
 std::string ToString(ts::PAT const &pat);

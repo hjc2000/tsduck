@@ -1,6 +1,5 @@
 cmake_minimum_required(VERSION 3.8)
 include($ENV{cpp_lib_build_scripts_path}/cmake-module/setup.cmake)
-include(target_import_jccpp)
 include(target_import_base)
 
 set(ProjectName tsduck)
@@ -18,6 +17,5 @@ target_compile_definitions(${ProjectName} PRIVATE TS_NO_SRT=1)
 target_compile_definitions(${ProjectName} PRIVATE TS_NO_RIST=1)
 
 target_import_src(${ProjectName})
-target_import_jccpp(${ProjectName} PUBLIC)
 target_import_base(${ProjectName} PUBLIC)
 target_link_libraries(${ProjectName} PUBLIC winmm Userenv Ws2_32)

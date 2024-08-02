@@ -1,14 +1,14 @@
 #pragma once
-#include<functional>
-#include<jccpp/define.h>
-#include<tsduck/container/TSPacketQueue.h>
-#include<tsduck/handler/TableHandler.h>
-#include<tsduck/interface/ITSPacketConsumer.h>
-#include<tsduck/interface/ITSPacketSource.h>
+#include <base/string/define.h>
+#include <functional>
+#include <tsduck/container/TSPacketQueue.h>
+#include <tsduck/handler/TableHandler.h>
+#include <tsduck/interface/ITSPacketConsumer.h>
+#include <tsduck/interface/ITSPacketSource.h>
 
 namespace video
 {
-	class JoinedTsStream :public ITSPacketSource
+	class JoinedTsStream : public ITSPacketSource
 	{
 	public:
 		JoinedTsStream();
@@ -28,7 +28,7 @@ namespace video
 		/// <summary>
 		///		当一个 ITSPacketSource 对象无包可读，准备取出下一个 ITSPacketSource 时，
 		///		发现储存 ITSPacketSource 对象的列表为空，就会触发此回调。
-		/// 
+		///
 		///		禁止将 lambda 表达式赋值给此字段，然后 lambda 表达式用值捕获指向本对象的智能指针。
 		///		这会导致自引用，导致智能指针无法析构，从而导致内存泄漏。
 		/// </summary>
@@ -45,7 +45,7 @@ namespace video
 		/// <summary>
 		///		向队列添加一个 ITSPacketSource 对象。不要在 _on_ts_packet_source_list_exhausted
 		///		回调以外的地方调用本方法，内部队列不是线程安全的，不能边退队边入队。
-		/// 
+		///
 		///		送进来的 ITSPacketSource 对象的 ReadPacket 方法返回任何非 ITSPacketSource::ReadPacketResult::Success
 		///		的值都会丢弃这个 ITSPacketSource，去从队列中取出下一个 ITSPacketSource。
 		/// </summary>

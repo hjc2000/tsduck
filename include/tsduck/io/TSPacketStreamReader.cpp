@@ -1,6 +1,6 @@
 #include "tsduck/io/TSPacketStreamReader.h"
-#include<jccpp/define.h>
-#include<tsAbstractReadStreamInterface.h>
+#include <base/string/define.h>
+#include <tsAbstractReadStreamInterface.h>
 
 using namespace video;
 using namespace ts;
@@ -10,7 +10,7 @@ using namespace std;
 /// <summary>
 ///		让 tsduck 读取字节流的接口
 /// </summary>
-class TSPacketStreamReader::ReadStreamInterface :public ts::AbstractReadStreamInterface
+class TSPacketStreamReader::ReadStreamInterface : public ts::AbstractReadStreamInterface
 {
 public:
 	ReadStreamInterface(shared_ptr<base::Stream> input_stream)
@@ -53,14 +53,12 @@ public:
 video::TSPacketStreamReader::TSPacketStreamReader(shared_ptr<base::Stream> input_stream)
 {
 	_input_stream = input_stream;
-	_read_stream_interface = shared_ptr<ReadStreamInterface> { new ReadStreamInterface { _input_stream } };
-	_ts_packet_stream = shared_ptr<ts::TSPacketStream> {
-		new ts::TSPacketStream {
+	_read_stream_interface = shared_ptr<ReadStreamInterface>{new ReadStreamInterface{_input_stream}};
+	_ts_packet_stream = shared_ptr<ts::TSPacketStream>{
+		new ts::TSPacketStream{
 			ts::TSPacketFormat::AUTODETECT,
 			_read_stream_interface.get(),
-			nullptr
-	}
-	};
+			nullptr}};
 }
 
 ITSPacketSource::ReadPacketResult video::TSPacketStreamReader::ReadPacket(ts::TSPacket &packet)
