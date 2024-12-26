@@ -1,11 +1,11 @@
 #pragma once
-#include<chrono>
-#include<tsOneShotPacketizer.h>
-#include<tsPAT.h>
-#include<tsPMT.h>
-#include<tsSDT.h>
-#include<tsTSPacket.h>
-#include<vector>
+#include <chrono>
+#include <tsOneShotPacketizer.h>
+#include <tsPAT.h>
+#include <tsPMT.h>
+#include <tsSDT.h>
+#include <tsTSPacket.h>
+#include <vector>
 
 namespace video
 {
@@ -24,8 +24,7 @@ namespace video
 		static std::vector<ts::TSPacket> ToTsPacket(
 			ts::DuckContext &duck,
 			ts::BinaryTable const &table,
-			uint16_t pid
-		);
+			uint16_t pid);
 
 		/// <summary>
 		///		将表格转化为一系列 ts 包，放到向量中并返回。可以遍历向量，将 ts 包写入 ts。
@@ -58,7 +57,7 @@ namespace video
 		/// <param name="pat"></param>
 		static void RemoveRedundantServicesFromSdt(ts::SDT &sdt, ts::PAT const &pat);
 	};
-}
+} // namespace video
 
 /// <summary>
 ///		将 PMT 的 PCR PID 和各个流的 PID 添加到 PIDSet 中。

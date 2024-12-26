@@ -10,20 +10,25 @@
 
 bool ts::MultiAnd(std::initializer_list<bool> args)
 {
-    for (auto it : args) {
-        if (!it) {
-            return false;
-        }
-    }
-    return args.size() > 0;
+	for (auto it : args)
+	{
+		if (!it)
+		{
+			return false;
+		}
+	}
+
+	return args.size() > 0;
 }
 
 bool ts::MultiOr(std::initializer_list<bool> args)
 {
-    for (auto it : args) {
-        if (it) {
-            return true;
-        }
-    }
-    return false;
+	for (auto it : args)
+	{
+		if (it)
+		{
+			return true;
+		}
+	}
+	return false;
 }

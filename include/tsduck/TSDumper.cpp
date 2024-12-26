@@ -1,4 +1,4 @@
-#include"tsduck/TSDumper.h"
+#include "tsduck/TSDumper.h"
 
 using namespace video;
 using namespace std;
@@ -8,8 +8,8 @@ TSDumper::TSDumper(std::string output_file_path)
 	_output_fs = shared_ptr<std::fstream>{
 		new std::fstream{
 			output_file_path,
-			std::ios_base::out | std::ios_base::trunc
-		}
+			std::ios_base::out | std::ios_base::trunc,
+		},
 	};
 }
 
@@ -57,7 +57,7 @@ void video::TSDumper::HandleSDT(ts::BinaryTable const &table)
 
 void TSDumper::Dump(std::string str)
 {
-	//std::cout << str << std::endl;
+	// std::cout << str << std::endl;
 	(*_output_fs) << str << std::endl;
 }
 
@@ -81,10 +81,10 @@ void video::TSDumper::DisplayStatisticalResults()
 		uint16_t pid = it.first;
 		uint64_t packet_count = it.second;
 		cout << std::format(
-			"pid = {}, packet_count = {}, rate = {}%",
-			pid,
-			packet_count,
-			(double)packet_count * 100 / _total_packet_count
-		) << endl;
+					"pid = {}, packet_count = {}, rate = {}%",
+					pid,
+					packet_count,
+					(double)packet_count * 100 / _total_packet_count)
+			 << endl;
 	}
 }

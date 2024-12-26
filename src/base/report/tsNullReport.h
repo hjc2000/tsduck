@@ -15,19 +15,21 @@
 #include "tsReport.h"
 #include "tsSingleton.h"
 
-namespace ts {
-    //!
-    //! A singleton implementing Report which drops all messages.
-    //! @ingroup log
-    //!
-    class TSDUCKDLL NullReport : public Report
-    {
-        TS_DECLARE_SINGLETON(NullReport);
-    protected:
-        // String interface implementation
-        virtual void writeLog(int severity, const UString& msg) override;
-    };
-}
+namespace ts
+{
+	//!
+	//! A singleton implementing Report which drops all messages.
+	//! @ingroup log
+	//!
+	class TSDUCKDLL NullReport : public Report
+	{
+		TS_DECLARE_SINGLETON(NullReport);
+
+	protected:
+		// String interface implementation
+		virtual void writeLog(int severity, UString const &msg) override;
+	};
+} // namespace ts
 
 //!
 //! Macro for fast access to the ts::NullReport singleton.

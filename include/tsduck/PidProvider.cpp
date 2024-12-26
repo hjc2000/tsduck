@@ -1,4 +1,4 @@
-#include"tsduck/PidProvider.h"
+#include "tsduck/PidProvider.h"
 
 using namespace std;
 using namespace video;
@@ -31,7 +31,7 @@ void video::PidProvider::SetReservedPid()
 
 uint16_t video::PidProvider::GetPid(uint16_t desired_pid)
 {
-	std::lock_guard l{ _lock };
+	std::lock_guard l{_lock};
 	if (!_set[desired_pid])
 	{
 		_set[desired_pid] = 1;

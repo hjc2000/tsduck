@@ -1,13 +1,12 @@
-#include"tsduck/TableOperator.h"
+#include "tsduck/TableOperator.h"
 
 std::vector<ts::TSPacket> video::TableOperator::ToTsPacket(
 	ts::DuckContext &duck,
 	ts::BinaryTable const &table,
-	uint16_t pid
-)
+	uint16_t pid)
 {
 	std::vector<ts::TSPacket> pat_packets;
-	ts::OneShotPacketizer pat_packetizer{ duck, pid };
+	ts::OneShotPacketizer pat_packetizer{duck, pid};
 	pat_packetizer.addTable(table);
 	pat_packetizer.getPackets(pat_packets);
 	return pat_packets;
@@ -39,8 +38,8 @@ void video::TableOperator::RemoveRedundantServicesFromSdt(ts::SDT &sdt, ts::PAT 
 	std::vector<uint16_t> services_to_remove;
 
 	/* 遍历 sdt.services，找出在 pat 中没有指示的，将 service_id 添加到待移除列表。
-	* 不能在迭代的同时修改集合。
-	*/
+	 * 不能在迭代的同时修改集合。
+	 */
 	for (auto &service_pair : sdt.services)
 	{
 		if (pat.pmts.find(service_pair.first) == pat.pmts.end())

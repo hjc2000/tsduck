@@ -1,10 +1,10 @@
-#include"tsduck/ServiceIdProvider.h"
+#include "tsduck/ServiceIdProvider.h"
 
 using namespace video;
 
 uint16_t video::ServiceIdProvider::GetServiceId(uint16_t desired_service_id)
 {
-	std::lock_guard l{ _lock };
+	std::lock_guard l{_lock};
 	if (!_set[desired_service_id])
 	{
 		_set[desired_service_id] = 1;

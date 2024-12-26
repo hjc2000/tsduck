@@ -1,4 +1,4 @@
-#include"PidChanger.h"
+#include "PidChanger.h"
 
 using namespace video;
 
@@ -45,7 +45,7 @@ void PidChanger::ChangeStreamPidAndPcrPid(ts::PMT &pmt)
 	}
 
 	// 更改各个流的 PID。
-	ts::PMT backup_pmt{ pmt };
+	ts::PMT backup_pmt{pmt};
 	for (auto &map_pair : _pid_map)
 	{
 		auto it = pmt.streams.find(map_pair.first);

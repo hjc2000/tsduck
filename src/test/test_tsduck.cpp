@@ -3,9 +3,9 @@
 #include <base/task/CancellationTokenSource.h>
 #include <filesystem>
 #include <tsCerrReport.h>
-#include <tsduck/TestProgramMux.h>
 #include <tsduck/io/TSPacketStreamReader.h>
 #include <tsduck/mux/JoinedTsStream.h>
+#include <tsduck/TestProgramMux.h>
 
 using namespace std;
 using namespace video;
@@ -38,14 +38,14 @@ void test_tsduck()
 	switch (pump_result)
 	{
 	case ITSPacketSource::ReadPacketResult::NoMorePacket:
-	{
-		cout << "读取完成，没有更多包了" << endl;
-		break;
-	}
+		{
+			cout << "读取完成，没有更多包了" << endl;
+			break;
+		}
 	default:
-	{
-		cout << "其他错误" << endl;
-		break;
-	}
+		{
+			cout << "其他错误" << endl;
+			break;
+		}
 	}
 }

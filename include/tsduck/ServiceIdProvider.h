@@ -1,7 +1,7 @@
 #pragma once
-#include<mutex>
-#include<stdint.h>
-#include<tsTS.h>
+#include <mutex>
+#include <stdint.h>
+#include <tsTS.h>
 
 namespace video
 {
@@ -27,7 +27,7 @@ namespace video
 		/// <param name="service_id"></param>
 		void ReturnServiceId(uint16_t service_id)
 		{
-			std::lock_guard l{ _lock };
+			std::lock_guard l{_lock};
 			_set[service_id] = 0;
 		}
 
@@ -42,4 +42,4 @@ namespace video
 		/// <returns></returns>
 		uint16_t FindUnusedServiceId();
 	};
-}
+} // namespace video

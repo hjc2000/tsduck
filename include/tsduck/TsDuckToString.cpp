@@ -8,10 +8,12 @@ std::string ToString(ts::TSPacket const &packet)
 	};
 
 #pragma region 时间信息
+
 	class TimeInfos : base::IJsonSerializable
 	{
 	public:
-		TimeInfos(ts::TSPacket const &packet) : _packet(packet)
+		TimeInfos(ts::TSPacket const &packet)
+			: _packet(packet)
 		{
 		}
 
@@ -19,7 +21,7 @@ std::string ToString(ts::TSPacket const &packet)
 		ts::TSPacket const &_packet;
 
 	public:
-		base::Json ToJson() override
+		base::Json ToJson() const override
 		{
 			base::Json json;
 
@@ -67,7 +69,7 @@ std::string ToString(ts::PAT const &pat)
 		{"version", pat.version},
 	};
 
-	for (const auto &pmt : pat.pmts)
+	for (auto const &pmt : pat.pmts)
 	{
 		base::Json pmt_json{
 			{"service_id", pmt.first},

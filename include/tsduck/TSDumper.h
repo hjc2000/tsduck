@@ -1,10 +1,10 @@
 #pragma once
-#include<fstream>
-#include<string>
-#include<tsTSPacket.h>
-#include<tsduck/TsDuckToString.h>
-#include<tsduck/handler/TableHandler.h>
-#include<tsduck/interface/ITSPacketConsumer.h>
+#include <fstream>
+#include <string>
+#include <tsduck/handler/TableHandler.h>
+#include <tsduck/interface/ITSPacketConsumer.h>
+#include <tsduck/TsDuckToString.h>
+#include <tsTSPacket.h>
 
 namespace video
 {
@@ -39,4 +39,4 @@ namespace video
 		bool _dump_pmt = true;
 		bool _dump_sdt = true;
 	};
-}
+} // namespace video

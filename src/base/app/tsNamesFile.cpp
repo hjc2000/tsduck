@@ -6,12 +6,11 @@
 //
 //----------------------------------------------------------------------------
 
+#include "tsNamesFile.h"
 #include "tsCerrReport.h"
 #include "tsFatal.h"
 #include "tsFileUtils.h"
-#include "tsNamesFile.h"
 #include "tsSingleton.h"
-
 
 //----------------------------------------------------------------------------
 // Predefined names files.
@@ -23,20 +22,20 @@ namespace
 	{
 		// The instance is also registered in AllInstances, as any NamesFile.
 		// This is just a faster lookup table.
-		const ts::NamesFile *volatile instance;
-		const ts::UChar *name;
+		ts::NamesFile const *volatile instance;
+		ts::UChar const *name;
 		bool merge;
 	};
+
 	Predef PredefData[] = {
-		{nullptr, u"tsduck.dtv.names", true},      // DTV
-		{nullptr, u"tsduck.ip.names", false},      // IP
-		{nullptr, u"tsduck.oui.names", false},     // OUI
-		{nullptr, u"tsduck.dektec.names", false},  // DEKTEC
-		{nullptr, u"tsduck.hides.names", false},   // HIDES
+		{nullptr, u"tsduck.dtv.names", true},     // DTV
+		{nullptr, u"tsduck.ip.names", false},     // IP
+		{nullptr, u"tsduck.oui.names", false},    // OUI
+		{nullptr, u"tsduck.dektec.names", false}, // DEKTEC
+		{nullptr, u"tsduck.hides.names", false},  // HIDES
 	};
 	constexpr size_t PredefDataCount = sizeof(PredefData) / sizeof(Predef);
-}
-
+} // namespace
 
 //----------------------------------------------------------------------------
 // A singleton which manages all NamesFile instances (thread-safe).
@@ -47,19 +46,21 @@ namespace
 	class AllInstances
 	{
 		TS_DECLARE_SINGLETON(AllInstances);
+
 	public:
 		~AllInstances();
-		const ts::NamesFile *getFile(const ts::UString &fileName, bool mergeExtensions);
-		void deleteInstance(const ts::NamesFile *instance);
-		void addExtensionFile(const ts::UString &fileName);
-		void removeExtensionFile(const ts::UString &fileName);
+		ts::NamesFile const *getFile(ts::UString const &fileName, bool mergeExtensions);
+		void deleteInstance(ts::NamesFile const *instance);
+		void addExtensionFile(ts::UString const &fileName);
+		void removeExtensionFile(ts::UString const &fileName);
 		void getExtensionFiles(ts::UStringList &fileNames);
+
 	private:
-		std::recursive_mutex                        _mutex{};     // Protected access to other fields.
-		std::map<ts::UString, const ts::NamesFile *> _files{};     // Loaded instances by name.
-		ts::UStringList                             _extFiles{};  // Additional names files.
+		std::recursive_mutex _mutex{};                         // Protected access to other fields.
+		std::map<ts::UString, ts::NamesFile const *> _files{}; // Loaded instances by name.
+		ts::UStringList _extFiles{};                           // Additional names files.
 	};
-}
+} // namespace
 
 TS_DEFINE_SINGLETON(AllInstances);
 
@@ -86,7 +87,7 @@ AllInstances::~AllInstances()
 }
 
 // Lookup / load a names file.
-const ts::NamesFile *AllInstances::getFile(const ts::UString &fileName, bool mergeExtensions)
+ts::NamesFile const *AllInstances::getFile(ts::UString const &fileName, bool mergeExtensions)
 {
 	std::lock_guard<std::recursive_mutex> lock(_mutex);
 	auto it = _files.find(fileName);
@@ -101,7 +102,7 @@ const ts::NamesFile *AllInstances::getFile(const ts::UString &fileName, bool mer
 }
 
 // Delete one instance.
-void AllInstances::deleteInstance(const ts::NamesFile *instance)
+void AllInstances::deleteInstance(ts::NamesFile const *instance)
 {
 	if (instance != nullptr)
 	{
@@ -115,7 +116,7 @@ void AllInstances::deleteInstance(const ts::NamesFile *instance)
 			}
 		}
 		// Unregister the instance.
-		for (auto it = _files.begin(); it != _files.end(); )
+		for (auto it = _files.begin(); it != _files.end();)
 		{
 			if (instance == it->second)
 			{
@@ -132,10 +133,10 @@ void AllInstances::deleteInstance(const ts::NamesFile *instance)
 }
 
 // Add an extension file name (check that there is no duplicate).
-void AllInstances::addExtensionFile(const ts::UString &fileName)
+void AllInstances::addExtensionFile(ts::UString const &fileName)
 {
 	std::lock_guard<std::recursive_mutex> lock(_mutex);
-	for (const auto &it : _extFiles)
+	for (auto const &it : _extFiles)
 	{
 		if (it == fileName)
 		{
@@ -146,10 +147,10 @@ void AllInstances::addExtensionFile(const ts::UString &fileName)
 }
 
 // Remove an extension file name.
-void AllInstances::removeExtensionFile(const ts::UString &fileName)
+void AllInstances::removeExtensionFile(ts::UString const &fileName)
 {
 	std::lock_guard<std::recursive_mutex> lock(_mutex);
-	for (auto it = _extFiles.begin(); it != _extFiles.end(); )
+	for (auto it = _extFiles.begin(); it != _extFiles.end();)
 	{
 		if (*it == fileName)
 		{
@@ -169,18 +170,16 @@ void AllInstances::getExtensionFiles(ts::UStringList &fileNames)
 	fileNames = _extFiles;
 }
 
-
 //----------------------------------------------------------------------------
 // Get a common instance of NamesFile for a given configuration file.
 //----------------------------------------------------------------------------
 
-const ts::NamesFile *ts::NamesFile::Instance(const UString &fileName, bool mergeExtensions)
+ts::NamesFile const *ts::NamesFile::Instance(UString const &fileName, bool mergeExtensions)
 {
 	return AllInstances::Instance().getFile(fileName, mergeExtensions);
 }
 
-
-const ts::NamesFile *ts::NamesFile::Instance(Predefined index)
+ts::NamesFile const *ts::NamesFile::Instance(Predefined index)
 {
 	// Using predefined indexes of file names saves string lookup and thread synchronization.
 	// The pointer is initially null and then always holds the same value. Even if the first
@@ -206,36 +205,34 @@ void ts::NamesFile::DeleteInstance(Predefined index)
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // A class to register additional names files to merge with the TSDuck names file.
 //----------------------------------------------------------------------------
 
-ts::NamesFile::RegisterExtensionFile::RegisterExtensionFile(const UString &filename)
+ts::NamesFile::RegisterExtensionFile::RegisterExtensionFile(UString const &filename)
 {
-	CERR.debug(u"registering names file %s", { filename });
+	CERR.debug(u"registering names file %s", {filename});
 	AllInstances::Instance().addExtensionFile(filename);
 }
 
-void ts::NamesFile::UnregisterExtensionFile(const UString &filename)
+void ts::NamesFile::UnregisterExtensionFile(UString const &filename)
 {
-	CERR.debug(u"unregistering names file %s", { filename });
+	CERR.debug(u"unregistering names file %s", {filename});
 	AllInstances::Instance().removeExtensionFile(filename);
 }
-
 
 //----------------------------------------------------------------------------
 // Constructor (load the configuration file).
 //----------------------------------------------------------------------------
 
-ts::NamesFile::NamesFile(const UString &fileName, bool mergeExtensions) :
-	_log(CERR)
+ts::NamesFile::NamesFile(UString const &fileName, bool mergeExtensions)
+	: _log(CERR)
 {
 	// Locate the configuration file.
 	if (_configFile.empty())
 	{
 		// Cannot load configuration, names will not be available.
-		_log.error(u"configuration file '%s' not found", { fileName });
+		_log.error(u"configuration file '%s' not found", {fileName});
 	}
 	else
 	{
@@ -248,12 +245,12 @@ ts::NamesFile::NamesFile(const UString &fileName, bool mergeExtensions) :
 		// Get list of extension names.
 		UStringList files;
 		AllInstances::Instance().getExtensionFiles(files);
-		for (const auto &name : files)
+		for (auto const &name : files)
 		{
-			const UString path;
+			UString const path;
 			if (path.empty())
 			{
-				_log.error(u"extension file '%s' not found", { name });
+				_log.error(u"extension file '%s' not found", {name});
 			}
 			else
 			{
@@ -263,21 +260,20 @@ ts::NamesFile::NamesFile(const UString &fileName, bool mergeExtensions) :
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Load a configuration file and merge its content into this instance.
 //----------------------------------------------------------------------------
 
-void ts::NamesFile::loadFile(const UString &fileName)
+void ts::NamesFile::loadFile(UString const &fileName)
 {
-	_log.debug(u"loading names file %s", { fileName });
+	_log.debug(u"loading names file %s", {fileName});
 
 	// Open configuration file.
 	std::ifstream strm(fileName.toUTF8().c_str());
 	if (!strm)
 	{
 		_configErrors++;
-		_log.error(u"error opening file %s", { fileName });
+		_log.error(u"error opening file %s", {fileName});
 		return;
 	}
 
@@ -319,11 +315,11 @@ void ts::NamesFile::loadFile(const UString &fileName)
 		else if (!decodeDefinition(line, section))
 		{
 			// Invalid line.
-			_log.error(u"%s: invalid line %d: %s", { fileName, lineNumber, line });
+			_log.error(u"%s: invalid line %d: %s", {fileName, lineNumber, line});
 			if (++_configErrors >= 20)
 			{
 				// Give up after that number of errors
-				_log.error(u"%s: too many errors, giving up", { fileName });
+				_log.error(u"%s: too many errors, giving up", {fileName});
 				break;
 			}
 		}
@@ -331,15 +327,14 @@ void ts::NamesFile::loadFile(const UString &fileName)
 	strm.close();
 }
 
-
 //----------------------------------------------------------------------------
 // Decode a line as "first[-last] = name". Return true on success.
 //----------------------------------------------------------------------------
 
-bool ts::NamesFile::decodeDefinition(const UString &line, ConfigSection *section)
+bool ts::NamesFile::decodeDefinition(UString const &line, ConfigSection *section)
 {
 	// Check the presence of the '=' and in a valid section.
-	const size_t equal = line.find(UChar('='));
+	size_t const equal = line.find(UChar('='));
 	if (equal == 0 || equal == NPOS || section == nullptr)
 	{
 		return false;
@@ -353,7 +348,7 @@ bool ts::NamesFile::decodeDefinition(const UString &line, ConfigSection *section
 	value.trim();
 
 	// Allowed "thousands separators" (ignored characters)
-	const UString ignore(u".,_");
+	UString const ignore(u".,_");
 
 	// Special cases (not values):
 	if (range.similar(u"bits"))
@@ -371,7 +366,7 @@ bool ts::NamesFile::decodeDefinition(const UString &line, ConfigSection *section
 	// Decode "first[-last]"
 	Value first = 0;
 	Value last = 0;
-	const size_t dash = range.find(UChar('-'));
+	size_t const dash = range.find(UChar('-'));
 	bool valid = false;
 
 	if (dash == NPOS)
@@ -393,13 +388,12 @@ bool ts::NamesFile::decodeDefinition(const UString &line, ConfigSection *section
 		}
 		else
 		{
-			_log.error(u"%s: range 0x%X-0x%X overlaps with an existing range", { _configFile, first, last });
+			_log.error(u"%s: range 0x%X-0x%X overlaps with an existing range", {_configFile, first, last});
 			valid = false;
 		}
 	}
 	return valid;
 }
-
 
 //----------------------------------------------------------------------------
 // Destructor: free all resources.
@@ -408,13 +402,12 @@ bool ts::NamesFile::decodeDefinition(const UString &line, ConfigSection *section
 ts::NamesFile::~NamesFile()
 {
 	// Deallocate all configuration sections.
-	for (const auto &it : _sections)
+	for (auto const &it : _sections)
 	{
 		delete it.second;
 	}
 	_sections.clear();
 }
-
 
 //----------------------------------------------------------------------------
 // Configuration section.
@@ -423,13 +416,12 @@ ts::NamesFile::~NamesFile()
 ts::NamesFile::ConfigSection::~ConfigSection()
 {
 	// Deallocate all configuration entries.
-	for (const auto &it : entries)
+	for (auto const &it : entries)
 	{
 		delete it.second;
 	}
 	entries.clear();
 }
-
 
 //----------------------------------------------------------------------------
 // Check if a range is free, ie no value is defined in the range.
@@ -458,18 +450,16 @@ bool ts::NamesFile::ConfigSection::freeRange(Value first, Value last) const
 	return true;
 }
 
-
 //----------------------------------------------------------------------------
 // Add a new configuration entry.
 //----------------------------------------------------------------------------
 
-void ts::NamesFile::ConfigSection::addEntry(Value first, Value last, const UString &name)
+void ts::NamesFile::ConfigSection::addEntry(Value first, Value last, UString const &name)
 {
 	ConfigEntry *entry = new ConfigEntry(last, name);
 	CheckNonNull(entry);
 	entries.insert(std::make_pair(first, entry));
 }
-
 
 //----------------------------------------------------------------------------
 // Get a name from a value, empty if not found.
@@ -500,7 +490,6 @@ ts::UString ts::NamesFile::ConfigSection::getName(Value val) const
 	return val >= it->first && val <= it->second->last ? it->second->name : UString();
 }
 
-
 //----------------------------------------------------------------------------
 // Format helper
 //----------------------------------------------------------------------------
@@ -525,12 +514,11 @@ ts::NamesFile::Value ts::NamesFile::DisplayMask(size_t bits)
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Format a name.
 //----------------------------------------------------------------------------
 
-ts::UString ts::NamesFile::Formatted(Value value, const UString &name, NamesFlags flags, size_t bits, Value alternateValue)
+ts::UString ts::NamesFile::Formatted(Value value, UString const &name, NamesFlags flags, size_t bits, Value alternateValue)
 {
 	// If neither decimal nor hexa are specified, hexa is the default.
 	if (!(flags & (NamesFlags::DECIMAL | NamesFlags::HEXA)))
@@ -549,7 +537,7 @@ ts::UString ts::NamesFile::Formatted(Value value, const UString &name, NamesFlag
 
 	// Default name.
 	UString defaultName;
-	const UString *displayName = &name;
+	UString const *displayName = &name;
 	if (name.empty())
 	{
 		// Name not found.
@@ -563,12 +551,12 @@ ts::UString ts::NamesFile::Formatted(Value value, const UString &name, NamesFlag
 		else if (bool(flags & NamesFlags::DECIMAL))
 		{
 			// Display decimal value only.
-			return UString::Format(u"%d", { value });
+			return UString::Format(u"%d", {value});
 		}
 		else
 		{
 			// Display hexadecimal value only.
-			return UString::Format(u"0x%0*X", { HexaDigits(bits), value });
+			return UString::Format(u"0x%0*X", {HexaDigits(bits), value});
 		}
 	}
 
@@ -579,37 +567,36 @@ ts::UString ts::NamesFile::Formatted(Value value, const UString &name, NamesFlag
 	}
 
 	TS_PUSH_WARNING()
-		TS_LLVM_NOWARNING(switch - enum) // enumeration values not explicitly handled in switch
-		TS_MSC_NOWARNING(4061)         // enumerator in switch of enum is not explicitly handled by a case label
+	TS_LLVM_NOWARNING(switch - enum) // enumeration values not explicitly handled in switch
+	TS_MSC_NOWARNING(4061)           // enumerator in switch of enum is not explicitly handled by a case label
 
-		switch (flags & (NamesFlags::FIRST | NamesFlags::DECIMAL | NamesFlags::HEXA))
-		{
-		case NamesFlags::DECIMAL:
-			return UString::Format(u"%s (%d)", { *displayName, value });
-		case NamesFlags::HEXA:
-			return UString::Format(u"%s (0x%0*X)", { *displayName, HexaDigits(bits), value });
-		case NamesFlags::HEXA | NamesFlags::DECIMAL:
-			return UString::Format(u"%s (0x%0*X, %d)", { *displayName, HexaDigits(bits), value, value });
-		case NamesFlags::DECIMAL | NamesFlags::FIRST:
-			return UString::Format(u"%d (%s)", { value, *displayName });
-		case NamesFlags::HEXA | NamesFlags::FIRST:
-			return UString::Format(u"0x%0*X (%s)", { HexaDigits(bits), value, *displayName });
-		case NamesFlags::HEXA | NamesFlags::DECIMAL | NamesFlags::FIRST:
-			return UString::Format(u"0x%0*X (%d, %s)", { HexaDigits(bits), value, value, *displayName });
-		default:
-			assert(false);
-			return UString();
-		}
+	switch (flags & (NamesFlags::FIRST | NamesFlags::DECIMAL | NamesFlags::HEXA))
+	{
+	case NamesFlags::DECIMAL:
+		return UString::Format(u"%s (%d)", {*displayName, value});
+	case NamesFlags::HEXA:
+		return UString::Format(u"%s (0x%0*X)", {*displayName, HexaDigits(bits), value});
+	case NamesFlags::HEXA | NamesFlags::DECIMAL:
+		return UString::Format(u"%s (0x%0*X, %d)", {*displayName, HexaDigits(bits), value, value});
+	case NamesFlags::DECIMAL | NamesFlags::FIRST:
+		return UString::Format(u"%d (%s)", {value, *displayName});
+	case NamesFlags::HEXA | NamesFlags::FIRST:
+		return UString::Format(u"0x%0*X (%s)", {HexaDigits(bits), value, *displayName});
+	case NamesFlags::HEXA | NamesFlags::DECIMAL | NamesFlags::FIRST:
+		return UString::Format(u"0x%0*X (%d, %s)", {HexaDigits(bits), value, value, *displayName});
+	default:
+		assert(false);
+		return UString();
+	}
 
 	TS_POP_WARNING()
 }
-
 
 //----------------------------------------------------------------------------
 // Get the section and name from a value, empty if not found.
 //----------------------------------------------------------------------------
 
-void ts::NamesFile::getName(const UString &sectionName, Value value, ConfigSection *&section, UString &name) const
+void ts::NamesFile::getName(UString const &sectionName, Value value, ConfigSection *&section, UString &name) const
 {
 	// Normalized section name.
 	UString sname(NormalizedSectionName(sectionName));
@@ -621,7 +608,7 @@ void ts::NamesFile::getName(const UString &sectionName, Value value, ConfigSecti
 	for (;;)
 	{
 		// Get the section.
-		const auto it = _sections.find(sname);
+		auto const it = _sections.find(sname);
 		if (it == _sections.end())
 		{
 			// Section not found, no name.
@@ -645,12 +632,11 @@ void ts::NamesFile::getName(const UString &sectionName, Value value, ConfigSecti
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Check if a name exists in a specified section.
 //----------------------------------------------------------------------------
 
-bool ts::NamesFile::nameExists(const UString &sectionName, Value value) const
+bool ts::NamesFile::nameExists(UString const &sectionName, Value value) const
 {
 	ConfigSection *section = nullptr;
 	UString name;
@@ -658,12 +644,11 @@ bool ts::NamesFile::nameExists(const UString &sectionName, Value value) const
 	return !name.empty();
 }
 
-
 //----------------------------------------------------------------------------
 // Get a name from a specified section.
 //----------------------------------------------------------------------------
 
-ts::UString ts::NamesFile::nameFromSection(const UString &sectionName, Value value, NamesFlags flags, size_t bits, Value alternateValue) const
+ts::UString ts::NamesFile::nameFromSection(UString const &sectionName, Value value, NamesFlags flags, size_t bits, Value alternateValue) const
 {
 	ConfigSection *section = nullptr;
 	UString name;
@@ -680,12 +665,11 @@ ts::UString ts::NamesFile::nameFromSection(const UString &sectionName, Value val
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Get a name from a specified section, with alternate fallback value.
 //----------------------------------------------------------------------------
 
-ts::UString ts::NamesFile::nameFromSectionWithFallback(const UString &sectionName, Value value1, Value value2, NamesFlags flags, size_t bits, Value alternateValue) const
+ts::UString ts::NamesFile::nameFromSectionWithFallback(UString const &sectionName, Value value1, Value value2, NamesFlags flags, size_t bits, Value alternateValue) const
 {
 	ConfigSection *section = nullptr;
 	UString name;
@@ -707,7 +691,6 @@ ts::UString ts::NamesFile::nameFromSectionWithFallback(const UString &sectionNam
 		return nameFromSection(sectionName, value2, flags, bits, alternateValue);
 	}
 }
-
 
 //----------------------------------------------------------------------------
 // Get the name of an OUI (IEEE-assigned Organizationally Unique Identifier).

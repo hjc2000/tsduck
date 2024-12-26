@@ -1,7 +1,7 @@
 #pragma once
-#include<mutex>
-#include<stdint.h>
-#include<tsTS.h>
+#include <mutex>
+#include <stdint.h>
+#include <tsTS.h>
 
 namespace video
 {
@@ -35,8 +35,8 @@ namespace video
 
 		void ReturnPid(uint16_t pid)
 		{
-			std::lock_guard l{ _lock };
+			std::lock_guard l{_lock};
 			_set[pid] = 0;
 		}
 	};
-}
+} // namespace video

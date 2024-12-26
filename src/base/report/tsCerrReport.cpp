@@ -7,7 +7,7 @@
 //----------------------------------------------------------------------------
 
 #include "tsCerrReport.h"
-#include<tsUString.h>
+#include <tsUString.h>
 
 // Define singleton instance
 TS_DEFINE_SINGLETON(ts::CerrReport);
@@ -20,7 +20,7 @@ ts::CerrReport::CerrReport()
 }
 
 // Message logging method.
-void ts::CerrReport::writeLog(int severity, const UString &msg)
+void ts::CerrReport::writeLog(int severity, UString const &msg)
 {
 	std::cerr << "* " << Severity::Header(severity) << msg << std::endl;
 	std::cerr.flush();

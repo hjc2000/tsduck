@@ -17,9 +17,9 @@
 
 // Must close a system header inclusion sequence.
 #if defined(TS_INSIDE_SYSTEM_HEADERS)
-    #undef TS_INSIDE_SYSTEM_HEADERS
+#undef TS_INSIDE_SYSTEM_HEADERS
 #else
-    #error "tsBeforeStandardHeaders.h must be included before tsAfterStandardHeaders.h"
+#error "tsBeforeStandardHeaders.h must be included before tsAfterStandardHeaders.h"
 #endif
 
 // Restore warnings
@@ -29,54 +29,54 @@ TS_POP_WARNING()
 // words as macros. Also, common function names, used by TSDuck, are defined
 // as macros, breaking C++ visibility rules.
 #if defined(min)
-    #undef min
+#undef min
 #endif
 #if defined(max)
-    #undef max
+#undef max
 #endif
 #if defined(MIN)
-    #undef MIN
+#undef MIN
 #endif
 #if defined(MAX)
-    #undef MAX
+#undef MAX
 #endif
 #if defined(IGNORE)
-    #undef IGNORE
+#undef IGNORE
 #endif
 #if defined(CHECK)
-    #undef CHECK
+#undef CHECK
 #endif
 #if defined(COMPUTE)
-    #undef COMPUTE
+#undef COMPUTE
 #endif
 #if defined(INFO)
-    #undef INFO
+#undef INFO
 #endif
 #if defined(ERROR)
-    #undef ERROR
+#undef ERROR
 #endif
 #if defined(SHORT)
-    #undef SHORT
+#undef SHORT
 #endif
 #if defined(LONG)
-    #undef LONG
+#undef LONG
 #endif
 #if defined(INTEGER)
-    #undef INTEGER
+#undef INTEGER
 #endif
 #if defined(Yield)
-    #undef Yield
+#undef Yield
 #endif
 #if defined(ALTERNATE)
-    #undef ALTERNATE
+#undef ALTERNATE
 #endif
 
 // Similar common-words macros in Mach kernel (macOS).
 #if defined(MAX_TRAILER_SIZE)
-    #undef MAX_TRAILER_SIZE
+#undef MAX_TRAILER_SIZE
 #endif
 
 // For platforms not supporting large files:
 #if !defined(TS_WINDOWS) && !defined(O_LARGEFILE) && !defined(DOXYGEN)
-    #define O_LARGEFILE 0
+#define O_LARGEFILE 0
 #endif

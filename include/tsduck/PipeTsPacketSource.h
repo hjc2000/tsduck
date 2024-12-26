@@ -2,8 +2,8 @@
 #include <base/container/List.h>
 #include <base/string/define.h>
 #include <memory>
-#include <tsTSPacket.h>
 #include <tsduck/interface/ITSPacketConsumer.h>
+#include <tsTSPacket.h>
 
 using std::shared_ptr;
 
@@ -11,9 +11,6 @@ namespace video
 {
 	class IPipeTsPacketSource
 	{
-	public:
-		virtual ~IPipeTsPacketSource() {}
-
 	public:
 		/// <summary>
 		///		添加一个包消费者
@@ -51,4 +48,4 @@ namespace video
 	public:
 		void AddTsPacketConsumerFromAnother(PipeTsPacketSource &another);
 	};
-}
+} // namespace video

@@ -1,14 +1,14 @@
 #pragma once
-#include<tsduck/interface/ITSPacketConsumer.h>
-#include<tsduck/PipeTsPacketSource.h>
-#include<tsduck/handler/TableVersionChangeHandler.h>
+#include <tsduck/handler/TableVersionChangeHandler.h>
+#include <tsduck/interface/ITSPacketConsumer.h>
+#include <tsduck/PipeTsPacketSource.h>
 
 namespace video
 {
 	/// <summary>
 	///		能够改变 PMT 和各个流的 PID。如果被更改 PID 的流携带了 PCR，则会自动更改 PMT 中的 pcr_pid 字段。
 	///		一般 PCR 在视频流中。
-	/// 
+	///
 	///		* 输出端需要串联 PatPmtRepeater，本类不会重复发送 PAT 和 PMT，除非这两个表版本更新。所有 *Changer 类都一样，
 	///		  只专注于修改，不专注重复 PAT 和 PMT。
 	/// </summary>
@@ -19,7 +19,7 @@ namespace video
 	{
 	public:
 		/// <summary>
-		///		
+		///
 		/// </summary>
 		/// <param name="pid_map">
 		///		键为原始 PID，值为要被修改成的 PID。
@@ -53,4 +53,4 @@ namespace video
 		/// <param name="pid_map"></param>
 		void SetPidMap(std::map<uint16_t, uint16_t> const &pid_map);
 	};
-}
+} // namespace video

@@ -34,17 +34,19 @@
 //! @see TS_DEFINE_SINGLETON()
 //! @hideinitializer
 //!
-#define TS_DECLARE_SINGLETON(classname)                             \
-        TS_NOCOPY(classname);                                       \
-    public:                                                         \
-        /** Get the instance of the singleton of this class. */     \
-        /** @return The instance of the singleton of this class. */ \
-        static classname& Instance();                               \
-    private:                                                        \
-        static classname* volatile _instance;                       \
-        static std::once_flag _once_flag;                           \
-        classname(); /* default constructor */                      \
-        static void CleanupSingleton()
+#define TS_DECLARE_SINGLETON(classname)                         \
+	TS_NOCOPY(classname);                                       \
+                                                                \
+public:                                                         \
+	/** Get the instance of the singleton of this class. */     \
+	/** @return The instance of the singleton of this class. */ \
+	static classname &Instance();                               \
+                                                                \
+private:                                                        \
+	static classname *volatile _instance;                       \
+	static std::once_flag _once_flag;                           \
+	classname(); /* default constructor */                      \
+	static void CleanupSingleton()
 
 //!
 //! @hideinitializer
@@ -65,26 +67,30 @@
 //! @endcode
 //! @see TS_DECLARE_SINGLETON()
 //!
-#define TS_DEFINE_SINGLETON(fullclassname)                       \
-    fullclassname& fullclassname::Instance()                     \
-    {                                                            \
-        if (_instance == nullptr) {                              \
-            std::call_once(_once_flag, []() {                    \
-                _instance = new fullclassname;                   \
-                std::atexit(fullclassname::CleanupSingleton);    \
-          });                                                    \
-        }                                                        \
-        return *_instance;                                       \
-    }                                                            \
-    void fullclassname::CleanupSingleton()                       \
-    {                                                            \
-        if (_instance != nullptr) {                              \
-            delete _instance;                                    \
-            _instance = nullptr;                                 \
-        }                                                        \
-    }                                                            \
-    fullclassname* volatile fullclassname::_instance = nullptr;  \
-    std::once_flag fullclassname::_once_flag {}
+#define TS_DEFINE_SINGLETON(fullclassname)                      \
+	fullclassname &fullclassname::Instance()                    \
+	{                                                           \
+		if (_instance == nullptr)                               \
+		{                                                       \
+			std::call_once(_once_flag, []() {                   \
+				_instance = new fullclassname;                  \
+				std::atexit(fullclassname::CleanupSingleton);   \
+			});                                                 \
+		}                                                       \
+		return *_instance;                                      \
+	}                                                           \
+	void fullclassname::CleanupSingleton()                      \
+	{                                                           \
+		if (_instance != nullptr)                               \
+		{                                                       \
+			delete _instance;                                   \
+			_instance = nullptr;                                \
+		}                                                       \
+	}                                                           \
+	fullclassname *volatile fullclassname::_instance = nullptr; \
+	std::once_flag fullclassname::_once_flag                    \
+	{                                                           \
+	}
 
 //!
 //! @hideinitializer
@@ -121,37 +127,42 @@
 //! the static instance. This class is declared by the expansion of the macro.
 //!
 #define TS_STATIC_INSTANCE(ObjectClass, ObjectArgs, StaticInstanceClass) \
-    namespace {                                                          \
-        class StaticInstanceClass                                        \
-        {                                                                \
-            TS_NOCOPY(StaticInstanceClass);                              \
-        public:                                                          \
-            /** Public static method to access the static instance. */   \
-            /** @return A reference to the static instance. */           \
-            static ObjectClass& Instance();                              \
-        private:                                                         \
-            static ObjectClass* volatile _instance;                      \
-            static std::once_flag _once_flag;                            \
-            static void CleanupSingleton();                              \
-        };                                                               \
-        ObjectClass& StaticInstanceClass::Instance()                     \
-        {                                                                \
-            if (_instance == nullptr) {                                  \
-                std::call_once(_once_flag, []() {                        \
-                    _instance = new ObjectClass ObjectArgs;              \
-                    std::atexit(StaticInstanceClass::CleanupSingleton);  \
-                });                                                      \
-            }                                                            \
-            return *_instance;                                           \
-        }                                                                \
-        void StaticInstanceClass::CleanupSingleton()                     \
-        {                                                                \
-            if (_instance != nullptr) {                                  \
-                delete _instance;                                        \
-                _instance = nullptr;                                     \
-            }                                                            \
-        }                                                                \
-        ObjectClass* volatile StaticInstanceClass::_instance = nullptr;  \
-        std::once_flag StaticInstanceClass::_once_flag {};               \
-    }                                                                    \
-    typedef int TS_UNIQUE_NAME(for_trailing_semicolon)
+	namespace                                                            \
+	{                                                                    \
+		class StaticInstanceClass                                        \
+		{                                                                \
+			TS_NOCOPY(StaticInstanceClass);                              \
+                                                                         \
+		public:                                                          \
+			/** Public static method to access the static instance. */   \
+			/** @return A reference to the static instance. */           \
+			static ObjectClass &Instance();                              \
+                                                                         \
+		private:                                                         \
+			static ObjectClass *volatile _instance;                      \
+			static std::once_flag _once_flag;                            \
+			static void CleanupSingleton();                              \
+		};                                                               \
+		ObjectClass &StaticInstanceClass::Instance()                     \
+		{                                                                \
+			if (_instance == nullptr)                                    \
+			{                                                            \
+				std::call_once(_once_flag, []() {                        \
+					_instance = new ObjectClass ObjectArgs;              \
+					std::atexit(StaticInstanceClass::CleanupSingleton);  \
+				});                                                      \
+			}                                                            \
+			return *_instance;                                           \
+		}                                                                \
+		void StaticInstanceClass::CleanupSingleton()                     \
+		{                                                                \
+			if (_instance != nullptr)                                    \
+			{                                                            \
+				delete _instance;                                        \
+				_instance = nullptr;                                     \
+			}                                                            \
+		}                                                                \
+		ObjectClass *volatile StaticInstanceClass::_instance = nullptr;  \
+		std::once_flag StaticInstanceClass::_once_flag{};                \
+	}                                                                    \
+	typedef int TS_UNIQUE_NAME(for_trailing_semicolon)
