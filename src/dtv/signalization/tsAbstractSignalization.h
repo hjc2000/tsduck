@@ -40,13 +40,19 @@ namespace ts
 		//! Check if this object is valid.
 		//! @return True if this object is valid.
 		//!
-		bool isValid() const { return _is_valid; }
+		bool isValid() const
+		{
+			return _is_valid;
+		}
 
 		//!
 		//! Invalidate this object.
 		//! This object must be rebuilt.
 		//!
-		void invalidate() { _is_valid = false; }
+		void invalidate()
+		{
+			_is_valid = false;
+		}
 
 		//!
 		//! This method clears the content of the table or descriptor.
@@ -71,15 +77,15 @@ namespace ts
 		//!
 		//! XML tag name for generic descriptors.
 		//!
-		static const UChar *const XML_GENERIC_DESCRIPTOR;
+		static UChar const *const XML_GENERIC_DESCRIPTOR;
 		//!
 		//! XML tag name for generic short sections.
 		//!
-		static const UChar *const XML_GENERIC_SHORT_TABLE;
+		static UChar const *const XML_GENERIC_SHORT_TABLE;
 		//!
 		//! XML tag name for generic tables with long sections.
 		//!
-		static const UChar *const XML_GENERIC_LONG_TABLE;
+		static UChar const *const XML_GENERIC_LONG_TABLE;
 
 		//!
 		//! Get a name from a specified section in the DVB names file.
@@ -94,10 +100,9 @@ namespace ts
 		//! @return The corresponding name.
 		//!
 		template <typename INT, typename std::enable_if<std::is_integral<INT>::value, int>::type = 0>
-		static UString DataName(const UChar *xml_name, const UChar *section, INT value, NamesFlags flags = NamesFlags::NAME, size_t bits = 0, INT alternate = 0)
+		static UString DataName(UChar const *xml_name, UChar const *section, INT value, NamesFlags flags = NamesFlags::NAME, size_t bits = 0, INT alternate = 0)
 		{
-			return NamesFile::Instance(NamesFile::Predefined::DTV)->
-				nameFromSection(UString::Format(u"%s.%s", { xml_name, section }), NamesFile::Value(value), flags, bits, NamesFile::Value(alternate));
+			return NamesFile::Instance(NamesFile::Predefined::DTV)->nameFromSection(UString::Format(u"%s.%s", {xml_name, section}), NamesFile::Value(value), flags, bits, NamesFile::Value(alternate));
 		}
 
 		//!
@@ -112,7 +117,7 @@ namespace ts
 		//! @return The corresponding name.
 		//!
 		template <typename INT, typename std::enable_if<std::is_integral<INT>::value, int>::type = 0>
-		UString dataName(const UChar *section, INT value, NamesFlags flags = NamesFlags::NAME, size_t bits = 0, INT alternate = 0)
+		UString dataName(UChar const *section, INT value, NamesFlags flags = NamesFlags::NAME, size_t bits = 0, INT alternate = 0)
 		{
 			return DataName<INT>(_xml_name, section, value, flags, bits, alternate);
 		}
@@ -124,7 +129,7 @@ namespace ts
 		//! @param [in] standards A bit mask of standards which define this structure.
 		//! @param [in] xml_legacy_name Table or descriptor legacy XML name. Ignored if null pointer.
 		//!
-		AbstractSignalization(const UChar *xml_name, Standards standards, const UChar *xml_legacy_name = nullptr);
+		AbstractSignalization(UChar const *xml_name, Standards standards, UChar const *xml_legacy_name = nullptr);
 
 		//!
 		//! Copy constructor.
@@ -132,7 +137,7 @@ namespace ts
 		//! the consequences of copying a pointer member.
 		//! @param [in] other The other instance to copy.
 		//!
-		AbstractSignalization(const AbstractSignalization &other) = default;
+		AbstractSignalization(AbstractSignalization const &other) = default;
 
 		//!
 		//! Move constructor.
@@ -147,7 +152,7 @@ namespace ts
 		//! @param [in] other The other instance to copy.
 		//! @return A reference to this object.
 		//!
-		AbstractSignalization &operator=(const AbstractSignalization &other);
+		AbstractSignalization &operator=(AbstractSignalization const &other);
 
 		//!
 		//! Assignment move operator.
@@ -166,12 +171,12 @@ namespace ts
 		virtual void clearContent() = 0;
 
 	private:
-		bool               _is_valid = true;  // This object is valid.
-		const UChar *const _xml_name;         // XML table or descriptor name.
-		const UChar *const _xml_legacy_name;  // Optional XML table or descriptor legacy name. Ignored if null pointer.
-		const Standards    _standards;        // Defining standards (usually only one).
+		bool _is_valid = true;               // This object is valid.
+		UChar const *const _xml_name;        // XML table or descriptor name.
+		UChar const *const _xml_legacy_name; // Optional XML table or descriptor legacy name. Ignored if null pointer.
+		Standards const _standards;          // Defining standards (usually only one).
 
 		// Unreachable constructors and operators.
 		AbstractSignalization() = delete;
 	};
-}
+} // namespace ts

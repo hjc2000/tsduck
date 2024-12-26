@@ -35,7 +35,7 @@ namespace ts
 		//! zero is considered as an unusual use case and we want to avoid missing table pointer in
 		//! constructors of the various tables.
 		//!
-		explicit DescriptorList(const AbstractTable *table);
+		explicit DescriptorList(AbstractTable const *table);
 
 		//!
 		//! Basic copy-like constructor.
@@ -46,7 +46,7 @@ namespace ts
 		//! Use zero for a descriptor list object outside a table.
 		//! @param [in] dl Another instance to copy.
 		//!
-		DescriptorList(const AbstractTable *table, const DescriptorList &dl);
+		DescriptorList(AbstractTable const *table, DescriptorList const &dl);
 
 		//!
 		//! Basic move-like constructor.
@@ -56,7 +56,7 @@ namespace ts
 		//! Use zero for a descriptor list object outside a table.
 		//! @param [in,out] dl Another instance to move.
 		//!
-		DescriptorList(const AbstractTable *table, DescriptorList &&dl) noexcept;
+		DescriptorList(AbstractTable const *table, DescriptorList &&dl) noexcept;
 
 		//!
 		//! Assignment operator.
@@ -65,7 +65,7 @@ namespace ts
 		//! @param [in] dl Another instance to copy.
 		//! @return A reference to this object.
 		//!
-		DescriptorList &operator=(const DescriptorList &dl);
+		DescriptorList &operator=(DescriptorList const &dl);
 
 		//!
 		//! Move assignment operator.
@@ -80,19 +80,28 @@ namespace ts
 		//! Check if the descriptor list is empty.
 		//! @return True if the descriptor list is empty.
 		//!
-		bool empty() const { return _list.empty(); }
+		bool empty() const
+		{
+			return _list.empty();
+		}
 
 		//!
 		//! Get the number of descriptors in the list (same as count()).
 		//! @return The number of descriptors in the list.
 		//!
-		size_t size() const { return _list.size(); }
+		size_t size() const
+		{
+			return _list.size();
+		}
 
 		//!
 		//! Get the number of descriptors in the list (same as size()).
 		//! @return The number of descriptors in the list.
 		//!
-		size_t count() const { return _list.size(); }
+		size_t count() const
+		{
+			return _list.size();
+		}
 
 		//!
 		//! Get the table id of the parent table.
@@ -104,22 +113,25 @@ namespace ts
 		//! Get the parent table.
 		//! @return The parent table or zero if there is none.
 		//!
-		const AbstractTable *table() const { return _table; }
+		AbstractTable const *table() const
+		{
+			return _table;
+		}
 
 		//!
 		//! Comparison operator.
 		//! @param [in] other Another instance to compare.
 		//! @return True if the two descriptor lists are identical.
 		//!
-		bool operator==(const DescriptorList &other) const;
+		bool operator==(DescriptorList const &other) const;
 		TS_UNEQUAL_OPERATOR(DescriptorList)
 
-			//!
-			//! Get a reference to the descriptor at a specified index.
-			//! @param [in] index Index in the list. Valid index are 0 to count()-1.
-			//! @return A reference to the descriptor at @a index.
-			//!
-			const DescriptorPtr &operator[](size_t index) const;
+		//!
+		//! Get a reference to the descriptor at a specified index.
+		//! @param [in] index Index in the list. Valid index are 0 to count()-1.
+		//! @return A reference to the descriptor at @a index.
+		//!
+		DescriptorPtr const &operator[](size_t index) const;
 
 		//!
 		//! Get the extended descriptor id of a descriptor in the list.
@@ -140,7 +152,7 @@ namespace ts
 		//! @param [in] desc The binary descriptor to add.
 		//! @return True in case of success, false if the descriptor is invalid.
 		//!
-		bool add(const DescriptorPtr &desc);
+		bool add(DescriptorPtr const &desc);
 
 		//!
 		//! Add one descriptor at end of list
@@ -148,14 +160,14 @@ namespace ts
 		//! @param [in] desc The descriptor to add.
 		//! @return True in case of success, false if the descriptor is invalid.
 		//!
-		bool add(DuckContext &duck, const AbstractDescriptor &desc);
+		bool add(DuckContext &duck, AbstractDescriptor const &desc);
 
 		//!
 		//! Add another list of descriptors at end of list.
 		//! The descriptors objects are shared between the two lists.
 		//! @param [in] dl The descriptor list to add.
 		//!
-		void add(const DescriptorList &dl)
+		void add(DescriptorList const &dl)
 		{
 			_list.insert(_list.end(), dl._list.begin(), dl._list.end());
 		}
@@ -166,7 +178,7 @@ namespace ts
 		//! @param [in] size Size in bytes of descriptors in memory.
 		//! @return True in case of success, false in case of invalid or truncated descriptor.
 		//!
-		bool add(const void *addr, size_t size);
+		bool add(void const *addr, size_t size);
 
 		//!
 		//! Add one descriptor from a memory area at end of list.
@@ -174,9 +186,9 @@ namespace ts
 		//! @param [in] addr Address of the descriptor in memory.
 		//! @return True in case of success, false if the descriptor is invalid.
 		//!
-		bool add(const void *addr)
+		bool add(void const *addr)
 		{
-			const uint8_t *data(reinterpret_cast<const uint8_t *>(addr));
+			uint8_t const *data(reinterpret_cast<uint8_t const *>(addr));
 			return add(data, size_t(data[1]) + 2);
 		}
 
@@ -198,7 +210,7 @@ namespace ts
 		//! @param [in,out] duck TSDuck execution context.
 		//! @param [in] desc The descriptor to merge.
 		//!
-		void merge(DuckContext &duck, const AbstractDescriptor &desc);
+		void merge(DuckContext &duck, AbstractDescriptor const &desc);
 
 		//!
 		//! Merge another descriptor list in this list.
@@ -206,7 +218,7 @@ namespace ts
 		//! @param [in,out] duck TSDuck execution context.
 		//! @param [in] other The other descriptor list to merge.
 		//!
-		void merge(DuckContext &duck, const DescriptorList &other);
+		void merge(DuckContext &duck, DescriptorList const &other);
 
 		//!
 		//! Remove the descriptor at the specified index in the list.
@@ -239,7 +251,10 @@ namespace ts
 		//!
 		//! Clear the content of the descriptor list.
 		//!
-		void clear() { _list.clear(); }
+		void clear()
+		{
+			_list.clear();
+		}
 
 		//!
 		//! Search a descriptor with the specified tag.
@@ -268,7 +283,7 @@ namespace ts
 		//! @param [in] start_index Start searching at this index.
 		//! @return The index of the descriptor in the list or count() if no such descriptor is found.
 		//!
-		size_t searchLanguage(const DuckContext &duck, const UString &language, size_t start_index = 0) const;
+		size_t searchLanguage(DuckContext const &duck, UString const &language, size_t start_index = 0) const;
 
 		//!
 		//! Search any kind of subtitle descriptor.
@@ -280,7 +295,7 @@ namespace ts
 		//! @param [in] start_index Start searching at this index.
 		//! @return The index of the descriptor in the list or count() if no such descriptor is found.
 		//!
-		size_t searchSubtitle(const UString &language = UString(), size_t start_index = 0) const;
+		size_t searchSubtitle(UString const &language = UString(), size_t start_index = 0) const;
 
 		//!
 		//! Search a descriptor with the specified tag.
@@ -362,12 +377,17 @@ namespace ts
 			PDS pds;
 
 			// Constructor:
-			Element(const DescriptorPtr &desc_ = DescriptorPtr(), PDS pds_ = 0) : desc(desc_), pds(pds_) {}
+			Element(DescriptorPtr const &desc_ = DescriptorPtr(), PDS pds_ = 0)
+				: desc(desc_),
+				  pds(pds_)
+			{
+			}
 		};
-		typedef std::vector <Element> ElementVector;
+
+		typedef std::vector<Element> ElementVector;
 
 		// Private members
-		const AbstractTable *const _table;  // Parent table (zero for descriptor list object outside a table).
+		AbstractTable const *const _table; // Parent table (zero for descriptor list object outside a table).
 		ElementVector _list{};             // Vector of safe pointers to descriptors.
 
 		// Prepare removal of a private_data_specifier descriptor.
@@ -378,10 +398,9 @@ namespace ts
 		// Inaccessible operations.
 		DescriptorList() = delete;
 		DescriptorList(DescriptorList &&) = delete;
-		DescriptorList(const DescriptorList &) = delete;
+		DescriptorList(DescriptorList const &) = delete;
 	};
-}
-
+} // namespace ts
 
 //----------------------------------------------------------------------------
 // Template definitions.

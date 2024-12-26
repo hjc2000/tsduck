@@ -14,13 +14,15 @@
 
 #pragma once
 
-namespace ts {
-    //!
-    //! Some IEEE-assigned Organizationally Unique Identifier (OUI) values.
-    //!
-    enum class OUI {
-        DVB      = 0x00015A,  //!< OUI for Digital Video Broadcasting
-        SKARDIN  = 0x001222,  //!< OUI for Skardin (UK)
-        LOGIWAYS = 0x002660,  //!< OUI for Logiways
-    };
-}
+namespace ts
+{
+	//!
+	//! Some IEEE-assigned Organizationally Unique Identifier (OUI) values.
+	//!
+	enum class OUI
+	{
+		DVB = 0x00015A,      //!< OUI for Digital Video Broadcasting
+		SKARDIN = 0x001222,  //!< OUI for Skardin (UK)
+		LOGIWAYS = 0x002660, //!< OUI for Logiways
+	};
+} // namespace ts

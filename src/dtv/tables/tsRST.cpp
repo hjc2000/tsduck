@@ -6,11 +6,11 @@
 //
 //----------------------------------------------------------------------------
 
+#include "tsRST.h"
 #include "tsBinaryTable.h"
 #include "tsDuckContext.h"
 #include "tsPSIBuffer.h"
 #include "tsPSIRepository.h"
-#include "tsRST.h"
 
 #define MY_XML_NAME u"RST"
 #define MY_CLASS ts::RST
@@ -22,31 +22,29 @@
 // Definition of names for running status values.
 //----------------------------------------------------------------------------
 
-const ts::Enumeration ts::RST::RunningStatusNames({
-	{u"undefined",   RS_UNDEFINED},
+ts::Enumeration const ts::RST::RunningStatusNames({
+	{u"undefined", RS_UNDEFINED},
 	{u"not-running", RS_NOT_RUNNING},
-	{u"starting",    RS_STARTING},
-	{u"pausing",     RS_PAUSING},
-	{u"running",     RS_RUNNING},
-	{u"off-air",     RS_OFF_AIR},
-	});
-
+	{u"starting", RS_STARTING},
+	{u"pausing", RS_PAUSING},
+	{u"running", RS_RUNNING},
+	{u"off-air", RS_OFF_AIR},
+});
 
 //----------------------------------------------------------------------------
 // Constructors
 //----------------------------------------------------------------------------
 
-ts::RST::RST() :
-	AbstractTable(MY_TID, MY_XML_NAME, MY_STD)
+ts::RST::RST()
+	: AbstractTable(MY_TID, MY_XML_NAME, MY_STD)
 {
 }
 
-ts::RST::RST(DuckContext &duck, const BinaryTable &table) :
-	RST()
+ts::RST::RST(DuckContext &duck, BinaryTable const &table)
+	: RST()
 {
 	deserialize(duck, table);
 }
-
 
 //----------------------------------------------------------------------------
 // Get the maximum size in bytes of the payload of sections of this table.
@@ -58,7 +56,6 @@ size_t ts::RST::maxPayloadSize() const
 	return MAX_PSI_SHORT_SECTION_PAYLOAD_SIZE;
 }
 
-
 //----------------------------------------------------------------------------
 // Clear the content of the table.
 //----------------------------------------------------------------------------
@@ -68,12 +65,11 @@ void ts::RST::clearContent()
 	events.clear();
 }
 
-
 //----------------------------------------------------------------------------
 // Deserialization
 //----------------------------------------------------------------------------
 
-void ts::RST::deserializePayload(PSIBuffer &buf, const Section &section)
+void ts::RST::deserializePayload(PSIBuffer &buf, Section const &section)
 {
 	while (buf.canRead())
 	{
@@ -87,7 +83,6 @@ void ts::RST::deserializePayload(PSIBuffer &buf, const Section &section)
 		events.push_back(event);
 	}
 }
-
 
 //----------------------------------------------------------------------------
 // Serialization

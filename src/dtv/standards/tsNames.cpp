@@ -6,20 +6,19 @@
 //
 //----------------------------------------------------------------------------
 
-#include "tsDuckContext.h"
 #include "tsNames.h"
-
+#include "tsDuckContext.h"
 
 //----------------------------------------------------------------------------
 // Tables ids: specific standards processing
 //----------------------------------------------------------------------------
 
-ts::UString ts::names::TID(const DuckContext &duck, uint8_t tid, uint16_t cas, NamesFlags flags)
+ts::UString ts::names::TID(DuckContext const &duck, uint8_t tid, uint16_t cas, NamesFlags flags)
 {
 	// Where to search table ids.
-	const NamesFile *const repo = NamesFile::Instance(NamesFile::Predefined::DTV);
-	const UString section(u"TableId");
-	const NamesFile::Value tidValue = NamesFile::Value(tid);
+	NamesFile const *const repo = NamesFile::Instance(NamesFile::Predefined::DTV);
+	UString const section(u"TableId");
+	NamesFile::Value const tidValue = NamesFile::Value(tid);
 
 	if (repo->nameExists(section, tidValue))
 	{
@@ -34,8 +33,8 @@ ts::UString ts::names::TID(const DuckContext &duck, uint8_t tid, uint16_t cas, N
 		for (Standards mask = Standards(1); mask != Standards::NONE; mask <<= 1)
 		{
 			// Check if this standard is currently in TSDuck context.
-			const bool supportedStandard = bool(duck.standards() & mask);
-			const NamesFile::Value stdValue = NamesFile::Value(mask) << 16;
+			bool const supportedStandard = bool(duck.standards() & mask);
+			NamesFile::Value const stdValue = NamesFile::Value(mask) << 16;
 			// Lookup name only if supported standard or no previous standard was found.
 			if (!foundWithSupportedStandard || supportedStandard)
 			{
@@ -73,17 +72,16 @@ ts::UString ts::names::TID(const DuckContext &duck, uint8_t tid, uint16_t cas, N
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Descriptor ids: specific processing for table-specific descriptors.
 //----------------------------------------------------------------------------
 
 bool ts::names::HasTableSpecificName(uint8_t did, uint8_t tid)
 {
-	const NamesFile *const repo = NamesFile::Instance(NamesFile::Predefined::DTV);
+	NamesFile const *const repo = NamesFile::Instance(NamesFile::Predefined::DTV);
 	return tid != TID_NULL &&
-		did < 0x80 &&
-		repo->nameExists(u"DescriptorId", (NamesFile::Value(tid) << 40) | 0x000000FFFFFFFF00 | NamesFile::Value(did));
+		   did < 0x80 &&
+		   repo->nameExists(u"DescriptorId", (NamesFile::Value(tid) << 40) | 0x000000FFFFFFFF00 | NamesFile::Value(did));
 }
 
 ts::UString ts::names::DID(uint8_t did, uint32_t pds, uint8_t tid, NamesFlags flags)
@@ -97,7 +95,7 @@ ts::UString ts::names::DID(uint8_t did, uint32_t pds, uint8_t tid, NamesFlags fl
 	else if (tid != 0xFF)
 	{
 		// Could be a table-specific descriptor.
-		const NamesFile::Value fullValue = (NamesFile::Value(tid) << 40) | 0x000000FFFFFFFF00 | NamesFile::Value(did);
+		NamesFile::Value const fullValue = (NamesFile::Value(tid) << 40) | 0x000000FFFFFFFF00 | NamesFile::Value(did);
 		return NameFromDTVWithFallback(u"DescriptorId", fullValue, NamesFile::Value(did), flags, 8);
 	}
 	else
@@ -117,7 +115,7 @@ ts::UString ts::names::EDID(uint8_t edid, NamesFlags flags)
 
 ts::UString ts::names::StreamType(uint8_t type, NamesFlags flags, uint32_t regid)
 {
-	const NamesFile *const repo = NamesFile::Instance(NamesFile::Predefined::DTV);
+	NamesFile const *const repo = NamesFile::Instance(NamesFile::Predefined::DTV);
 	NamesFile::Value fullValue = (NamesFile::Value(regid) << 8) | NamesFile::Value(type);
 	if (regid == REGID_NULL || !repo->nameExists(u"StreamType", fullValue))
 	{
@@ -132,9 +130,9 @@ ts::UString ts::names::PrivateDataSpecifier(uint32_t pds, NamesFlags flags)
 	return NameFromDTV(u"PrivateDataSpecifier", NamesFile::Value(pds), flags, 32);
 }
 
-ts::UString ts::names::CASId(const DuckContext &duck, uint16_t id, NamesFlags flags)
+ts::UString ts::names::CASId(DuckContext const &duck, uint16_t id, NamesFlags flags)
 {
-	const UChar *section = bool(duck.standards() & Standards::ISDB) ? u"ARIBCASystemId" : u"CASystemId";
+	UChar const *section = bool(duck.standards() & Standards::ISDB) ? u"ARIBCASystemId" : u"CASystemId";
 	return NameFromDTV(section, NamesFile::Value(id), flags, 16);
 }
 
@@ -168,12 +166,11 @@ ts::UString ts::names::RunningStatus(uint8_t status, NamesFlags flags)
 	return NameFromDTV(u"RunningStatus", NamesFile::Value(status), flags, 8);
 }
 
-
 //----------------------------------------------------------------------------
 // Content ids with variants.
 //----------------------------------------------------------------------------
 
-ts::UString ts::names::Content(const DuckContext &duck, uint8_t x, NamesFlags flags)
+ts::UString ts::names::Content(DuckContext const &duck, uint8_t x, NamesFlags flags)
 {
 	if (bool(duck.standards() & Standards::JAPAN))
 	{

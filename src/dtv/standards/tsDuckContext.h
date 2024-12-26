@@ -57,6 +57,7 @@ namespace ts
 	class TSDUCKDLL DuckContext
 	{
 		TS_NOCOPY(DuckContext);
+
 	public:
 		//!
 		//! Constructor.
@@ -74,7 +75,10 @@ namespace ts
 		//! Get the current report for log and error messages.
 		//! @return A reference to the current output report.
 		//!
-		Report &report() const { return *_report; }
+		Report &report() const
+		{
+			return *_report;
+		}
 
 		//!
 		//! Set a new report for log and error messages.
@@ -86,7 +90,10 @@ namespace ts
 		//! Get the current output stream to issue long text output.
 		//! @return A reference to the output stream.
 		//!
-		std::ostream &out() const { return *_out; }
+		std::ostream &out() const
+		{
+			return *_out;
+		}
 
 		//!
 		//! Redirect the output stream to a file.
@@ -95,7 +102,7 @@ namespace ts
 		//! output is already redirected outside @c std::cout, do nothing.
 		//! @return True on success, false on error.
 		//!
-		bool setOutput(const fs::path &fileName, bool override = true);
+		bool setOutput(fs::path const &fileName, bool override = true);
 
 		//!
 		//! Redirect the output stream to a stream.
@@ -109,7 +116,10 @@ namespace ts
 		//! Check if output was redirected.
 		//! @return True if the current output is neither the initial one nor the standard output.
 		//!
-		bool redirectedOutput() const { return _out != &std::cout && _out != _initial_out; }
+		bool redirectedOutput() const
+		{
+			return _out != &std::cout && _out != _initial_out;
+		}
 
 		//!
 		//! Flush the text output.
@@ -124,14 +134,20 @@ namespace ts
 		//! @param [in] charset An optional specific character set to use instead of the default one.
 		//! @return The default input character set (never null).
 		//!
-		const Charset *charsetIn(const Charset *charset = nullptr) const { return charset != nullptr ? charset : _charsetIn; }
+		Charset const *charsetIn(Charset const *charset = nullptr) const
+		{
+			return charset != nullptr ? charset : _charsetIn;
+		}
 
 		//!
 		//! Get the preferred output character set for strings to insert in tables and descriptors.
 		//! @param [in] charset An optional specific character set to use instead of the default one.
 		//! @return The preferred output character set (never null).
 		//!
-		const Charset *charsetOut(const Charset *charset = nullptr) const { return charset != nullptr ? charset : _charsetOut; }
+		Charset const *charsetOut(Charset const *charset = nullptr) const
+		{
+			return charset != nullptr ? charset : _charsetOut;
+		}
 
 		//!
 		//! Convert a signalization string into UTF-16 using the default input character set.
@@ -141,7 +157,7 @@ namespace ts
 		//! @return True on success, false on error (truncated, unsupported format, etc.)
 		//! @see ETSI EN 300 468, Annex A.
 		//!
-		bool decode(UString &str, const uint8_t *data, size_t size) const
+		bool decode(UString &str, uint8_t const *data, size_t size) const
 		{
 			return _charsetIn->decode(str, data, size);
 		}
@@ -153,7 +169,7 @@ namespace ts
 		//! @return The equivalent UTF-16 string. Stop on untranslatable character, if any.
 		//! @see ETSI EN 300 468, Annex A.
 		//!
-		UString decoded(const uint8_t *data, size_t size) const
+		UString decoded(uint8_t const *data, size_t size) const
 		{
 			return _charsetIn->decoded(data, size);
 		}
@@ -166,7 +182,7 @@ namespace ts
 		//! @return True on success, false on error (truncated, unsupported format, etc.)
 		//! @see ETSI EN 300 468, Annex A.
 		//!
-		bool decodeWithByteLength(UString &str, const uint8_t *&data, size_t &size) const
+		bool decodeWithByteLength(UString &str, uint8_t const *&data, size_t &size) const
 		{
 			return _charsetIn->decodeWithByteLength(str, data, size);
 		}
@@ -182,7 +198,7 @@ namespace ts
 		//! @return The equivalent UTF-16 string. Stop on untranslatable character, if any.
 		//! @see ETSI EN 300 468, Annex A.
 		//!
-		UString decodedWithByteLength(const uint8_t *&data, size_t &size) const
+		UString decodedWithByteLength(uint8_t const *&data, size_t &size) const
 		{
 			return _charsetIn->decodedWithByteLength(data, size);
 		}
@@ -198,7 +214,7 @@ namespace ts
 		//! @param [in] count Maximum number of characters to convert.
 		//! @return The number of serialized characters (which is usually not the same as the number of written bytes).
 		//!
-		size_t encode(uint8_t *&buffer, size_t &size, const UString &str, size_t start = 0, size_t count = NPOS) const
+		size_t encode(uint8_t *&buffer, size_t &size, UString const &str, size_t start = 0, size_t count = NPOS) const
 		{
 			return _charsetOut->encode(buffer, size, str, start, count);
 		}
@@ -210,7 +226,7 @@ namespace ts
 		//! @param [in] count Maximum number of characters to convert.
 		//! @return The DVB string.
 		//!
-		ByteBlock encoded(const UString &str, size_t start = 0, size_t count = NPOS) const
+		ByteBlock encoded(UString const &str, size_t start = 0, size_t count = NPOS) const
 		{
 			return _charsetOut->encoded(str, start, count);
 		}
@@ -227,7 +243,7 @@ namespace ts
 		//! @param [in] count Maximum number of characters to convert.
 		//! @return The number of serialized characters (which is usually not the same as the number of written bytes).
 		//!
-		size_t encodeWithByteLength(uint8_t *&buffer, size_t &size, const UString &str, size_t start = 0, size_t count = NPOS) const
+		size_t encodeWithByteLength(uint8_t *&buffer, size_t &size, UString const &str, size_t start = 0, size_t count = NPOS) const
 		{
 			return _charsetOut->encodeWithByteLength(buffer, size, str, start, count);
 		}
@@ -239,7 +255,7 @@ namespace ts
 		//! @param [in] count Maximum number of characters to convert.
 		//! @return The DVB string with the initial length byte.
 		//!
-		ByteBlock encodedWithByteLength(const UString &str, size_t start = 0, size_t count = NPOS) const
+		ByteBlock encodedWithByteLength(UString const &str, size_t start = 0, size_t count = NPOS) const
 		{
 			return _charsetOut->encodedWithByteLength(str, start, count);
 		}
@@ -252,14 +268,14 @@ namespace ts
 		//! @param [in] charset The new default input character set or a null pointer to revert
 		//! to the default.
 		//!
-		void setDefaultCharsetIn(const Charset *charset);
+		void setDefaultCharsetIn(Charset const *charset);
 
 		//!
 		//! Set the preferred output character set for strings.
 		//! @param [in] charset The new preferred output character set or a null pointer to revert
 		//! to the default.
 		//!
-		void setDefaultCharsetOut(const Charset *charset);
+		void setDefaultCharsetOut(Charset const *charset);
 
 		//!
 		//! Set the default CAS id to use.
@@ -297,7 +313,7 @@ namespace ts
 		//! Get the set of all registration ids, as found in MPEG-defined registration descriptors.
 		//! @return A constant reference to the set of all registration ids.
 		//!
-		const std::set<uint32_t> &registrationIds() const
+		std::set<uint32_t> const &registrationIds() const
 		{
 			return _registrationIds;
 		}
@@ -320,7 +336,10 @@ namespace ts
 		//! Get the list of standards which are present in the transport stream or context.
 		//! @return A bit mask of standards.
 		//!
-		Standards standards() const { return _accStandards; }
+		Standards standards() const
+		{
+			return _accStandards;
+		}
 
 		//!
 		//! Add a list of standards which are present in the transport stream or context.
@@ -338,20 +357,26 @@ namespace ts
 		//! Set the name of the default region for UVH and VHF band frequency layout.
 		//! @param [in] region Name of the region. Use an empty string to revert to the default.
 		//!
-		void setDefaultHFRegion(const UString &region);
+		void setDefaultHFRegion(UString const &region);
 
 		//!
 		//! Set the explicit inclusion of leap seconds where it is needed.
 		//! Currently, this applies to SCTE 35 splice_schedule() commands only.
 		//! @param [in] on True if leap seconds shall be explicitly included (the default), false to ignore leap seconds.
 		//!
-		void setUseLeapSeconds(bool on) { _useLeapSeconds = on; }
+		void setUseLeapSeconds(bool on)
+		{
+			_useLeapSeconds = on;
+		}
 
 		//!
 		//! Check the explicit inclusion of leap seconds where it is needed.
 		//! @return True if leap seconds shall be explicitly included, false to ignore leap seconds.
 		//!
-		bool useLeapSeconds() const { return _useLeapSeconds; }
+		bool useLeapSeconds() const
+		{
+			return _useLeapSeconds;
+		}
 
 		//!
 		//! An opaque class to save all command line options, as loaded by loadArgs().
@@ -361,16 +386,17 @@ namespace ts
 		public:
 			//! Default constructor.
 			SavedArgs();
+
 		private:
 			friend class DuckContext;
-			int         _definedCmdOptions; // Defined command line options, indicate which fields are valid.
-			Standards   _cmdStandards;      // Forced standards from the command line.
-			UString     _charsetInName;     // Character set to interpret strings without prefix code.
-			UString     _charsetOutName;    // Preferred character set to generate strings.
-			uint16_t    _casId;             // Preferred CAS id.
-			PDS         _defaultPDS;        // Default PDS value if undefined.
-			UString     _hfDefaultRegion;   // Default region for UHF/VHF band.
-			MilliSecond _timeReference;     // Time reference in milli-seconds from UTC (used in ISDB variants).
+			int _definedCmdOptions;     // Defined command line options, indicate which fields are valid.
+			Standards _cmdStandards;    // Forced standards from the command line.
+			UString _charsetInName;     // Character set to interpret strings without prefix code.
+			UString _charsetOutName;    // Preferred character set to generate strings.
+			uint16_t _casId;            // Preferred CAS id.
+			PDS _defaultPDS;            // Default PDS value if undefined.
+			UString _hfDefaultRegion;   // Default region for UHF/VHF band.
+			MilliSecond _timeReference; // Time reference in milli-seconds from UTC (used in ISDB variants).
 		};
 
 		//!
@@ -383,27 +409,27 @@ namespace ts
 		//! Restore all command line options, as loaded by loadArgs() in another DuckContext.
 		//! @param [in] args Saved arguments to restore.
 		//!
-		void restoreArgs(const SavedArgs &args);
+		void restoreArgs(SavedArgs const &args);
 
 	private:
-		Report *_report;        // Pointer to a report for error messages. Never null.
-		std::ostream *_initial_out;   // Initial text output stream. Never null.
-		std::ostream *_out;           // Pointer to text output stream. Never null.
-		std::ofstream  _outFile{};    // Open stream when redirected to a file by name.
-		const Charset *_charsetIn;     // DVB character set to interpret strings without prefix code.
-		const Charset *_charsetOut;    // Preferred DVB character set to generate strings.
-		uint16_t       _casId{ CASID_NULL };              // Preferred CAS id.
-		PDS            _defaultPDS = 0;                  // Default PDS value if undefined.
-		bool           _useLeapSeconds = true;           // Explicit use of leap seconds.
-		Standards      _cmdStandards{ Standards::NONE };  // Forced standards from the command line.
-		Standards      _accStandards{ Standards::NONE };  // Accumulated list of standards in the context.
-		UString        _hfDefaultRegion{};              // Default region for UHF/VHF band.
-		MilliSecond    _timeReference = 0;               // Time reference in milli-seconds from UTC (used in ISDB variants).
-		UString        _timeRefConfig{};                // Time reference name from TSDuck configuration file.
-		int            _definedCmdOptions = 0;           // Mask of defined command line options (CMD_xxx below).
-		uint32_t       _lastRegistrationId = REGID_NULL; // Last encountered registration id in a registration descriptor.
-		std::set<uint32_t> _registrationIds{};          // Set of all registration ids.
-		const std::map<uint16_t, const UChar *> _predefined_cas{};  // Predefined CAS names, index by CAS id (first in range).
+		Report *_report;                                           // Pointer to a report for error messages. Never null.
+		std::ostream *_initial_out;                                // Initial text output stream. Never null.
+		std::ostream *_out;                                        // Pointer to text output stream. Never null.
+		std::ofstream _outFile{};                                  // Open stream when redirected to a file by name.
+		Charset const *_charsetIn;                                 // DVB character set to interpret strings without prefix code.
+		Charset const *_charsetOut;                                // Preferred DVB character set to generate strings.
+		uint16_t _casId{CASID_NULL};                               // Preferred CAS id.
+		PDS _defaultPDS = 0;                                       // Default PDS value if undefined.
+		bool _useLeapSeconds = true;                               // Explicit use of leap seconds.
+		Standards _cmdStandards{Standards::NONE};                  // Forced standards from the command line.
+		Standards _accStandards{Standards::NONE};                  // Accumulated list of standards in the context.
+		UString _hfDefaultRegion{};                                // Default region for UHF/VHF band.
+		MilliSecond _timeReference = 0;                            // Time reference in milli-seconds from UTC (used in ISDB variants).
+		UString _timeRefConfig{};                                  // Time reference name from TSDuck configuration file.
+		int _definedCmdOptions = 0;                                // Mask of defined command line options (CMD_xxx below).
+		uint32_t _lastRegistrationId = REGID_NULL;                 // Last encountered registration id in a registration descriptor.
+		std::set<uint32_t> _registrationIds{};                     // Set of all registration ids.
+		std::map<uint16_t, UChar const *> const _predefined_cas{}; // Predefined CAS names, index by CAS id (first in range).
 
 		// List of command line options to define and analyze.
 		enum CmdOptions
@@ -415,6 +441,5 @@ namespace ts
 			CMD_CAS = 0x0010,
 			CMD_TIMEREF = 0x0020,
 		};
-
 	};
-}
+} // namespace ts

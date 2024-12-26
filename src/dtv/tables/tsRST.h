@@ -31,12 +31,12 @@ namespace ts
 		class TSDUCKDLL Event
 		{
 		public:
-			Event() = default;                 //!< Constructor.
-			uint16_t transport_stream_id = 0;  //!< Transport stream id.
-			uint16_t original_network_id = 0;  //!< Original network id.
-			uint16_t service_id = 0;           //!< Service id.
-			uint16_t event_id = 0;             //!< Event id.
-			uint8_t  running_status = 0;       //!< Running status of the event.
+			Event() = default;                //!< Constructor.
+			uint16_t transport_stream_id = 0; //!< Transport stream id.
+			uint16_t original_network_id = 0; //!< Original network id.
+			uint16_t service_id = 0;          //!< Service id.
+			uint16_t event_id = 0;            //!< Event id.
+			uint8_t running_status = 0;       //!< Running status of the event.
 		};
 
 		//!
@@ -45,12 +45,12 @@ namespace ts
 		typedef std::list<Event> EventList;
 
 		// RST public members:
-		EventList events{};  //!< List of events with a running status.
+		EventList events{}; //!< List of events with a running status.
 
 		//!
 		//! Definition of names for running status values.
 		//!
-		static const Enumeration RunningStatusNames;
+		static Enumeration const RunningStatusNames;
 
 		//!
 		//! Default constructor.
@@ -62,13 +62,13 @@ namespace ts
 		//! @param [in,out] duck TSDuck execution context.
 		//! @param [in] table Binary table to deserialize.
 		//!
-		RST(DuckContext &duck, const BinaryTable &table);
+		RST(DuckContext &duck, BinaryTable const &table);
 
 	protected:
 		// Inherited methods
 		virtual void clearContent() override;
 		virtual size_t maxPayloadSize() const override;
 		virtual void serializePayload(BinaryTable &, PSIBuffer &) const override;
-		virtual void deserializePayload(PSIBuffer &, const Section &) override;
+		virtual void deserializePayload(PSIBuffer &, Section const &) override;
 	};
-}
+} // namespace ts

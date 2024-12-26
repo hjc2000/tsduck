@@ -6,25 +6,24 @@
 //
 //----------------------------------------------------------------------------
 
-#include "tsAbstractTable.h"
 #include "tsBinaryTable.h"
+#include "tsAbstractTable.h"
 #include "tsDuckContext.h"
 #include "tsPSIRepository.h"
 #include "tsSection.h"
-
 
 //----------------------------------------------------------------------------
 // Move constructor.
 //----------------------------------------------------------------------------
 
-ts::BinaryTable::BinaryTable(BinaryTable &&other) noexcept :
-	_is_valid(other._is_valid),
-	_tid(other._tid),
-	_tid_ext(other._tid_ext),
-	_version(other._version),
-	_source_pid(other._source_pid),
-	_missing_count(other._missing_count),
-	_sections(std::move(other._sections))
+ts::BinaryTable::BinaryTable(BinaryTable &&other) noexcept
+	: _is_valid(other._is_valid),
+	  _tid(other._tid),
+	  _tid_ext(other._tid_ext),
+	  _version(other._version),
+	  _source_pid(other._source_pid),
+	  _missing_count(other._missing_count),
+	  _sections(std::move(other._sections))
 {
 	// If section array was actually moved, reset related data.
 	if (other._sections.empty())
@@ -33,20 +32,19 @@ ts::BinaryTable::BinaryTable(BinaryTable &&other) noexcept :
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Copy constructor. The sections are either shared between the
 // two tables or duplicated.
 //----------------------------------------------------------------------------
 
-ts::BinaryTable::BinaryTable(const BinaryTable &other, ShareMode mode) :
-	_is_valid(other._is_valid),
-	_tid(other._tid),
-	_tid_ext(other._tid_ext),
-	_version(other._version),
-	_source_pid(other._source_pid),
-	_missing_count(other._missing_count),
-	_sections()
+ts::BinaryTable::BinaryTable(BinaryTable const &other, ShareMode mode)
+	: _is_valid(other._is_valid),
+	  _tid(other._tid),
+	  _tid_ext(other._tid_ext),
+	  _version(other._version),
+	  _source_pid(other._source_pid),
+	  _missing_count(other._missing_count),
+	  _sections()
 {
 	switch (mode)
 	{
@@ -80,12 +78,11 @@ ts::BinaryTable::BinaryTable(const BinaryTable &other, ShareMode mode) :
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Constructor from an array of sections.
 //----------------------------------------------------------------------------
 
-ts::BinaryTable::BinaryTable(const SectionPtrVector &sections, bool replace, bool grow)
+ts::BinaryTable::BinaryTable(SectionPtrVector const &sections, bool replace, bool grow)
 {
 	if (!addSections(sections, replace, grow))
 	{
@@ -93,13 +90,12 @@ ts::BinaryTable::BinaryTable(const SectionPtrVector &sections, bool replace, boo
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Assignment. The sections are referenced, and thus shared
 // between the two table objects.
 //----------------------------------------------------------------------------
 
-ts::BinaryTable &ts::BinaryTable::operator=(const BinaryTable &other)
+ts::BinaryTable &ts::BinaryTable::operator=(BinaryTable const &other)
 {
 	if (&other != this)
 	{
@@ -113,7 +109,6 @@ ts::BinaryTable &ts::BinaryTable::operator=(const BinaryTable &other)
 	}
 	return *this;
 }
-
 
 //----------------------------------------------------------------------------
 // Move assignment.
@@ -139,12 +134,11 @@ ts::BinaryTable &ts::BinaryTable::operator=(BinaryTable &&other) noexcept
 	return *this;
 }
 
-
 //----------------------------------------------------------------------------
 // Duplication. Similar to assignment but the sections are duplicated.
 //----------------------------------------------------------------------------
 
-ts::BinaryTable &ts::BinaryTable::copy(const BinaryTable &table)
+ts::BinaryTable &ts::BinaryTable::copy(BinaryTable const &table)
 {
 	_is_valid = table._is_valid;
 	_tid = table._tid;
@@ -167,12 +161,11 @@ ts::BinaryTable &ts::BinaryTable::copy(const BinaryTable &table)
 	return *this;
 }
 
-
 //----------------------------------------------------------------------------
 // Comparison. Note: Invalid tables are never identical
 //----------------------------------------------------------------------------
 
-bool ts::BinaryTable::operator==(const BinaryTable &table) const
+bool ts::BinaryTable::operator==(BinaryTable const &table) const
 {
 	bool equal =
 		_is_valid &&
@@ -190,16 +183,14 @@ bool ts::BinaryTable::operator==(const BinaryTable &table) const
 	return equal;
 }
 
-
 //----------------------------------------------------------------------------
 // Get a pointer to a section.
 //----------------------------------------------------------------------------
 
-const ts::SectionPtr ts::BinaryTable::sectionAt(size_t index) const
+ts::SectionPtr const ts::BinaryTable::sectionAt(size_t index) const
 {
 	return index < _sections.size() ? _sections[index] : SectionPtr();
 }
-
 
 //----------------------------------------------------------------------------
 // Implementation of AbstractDefinedByStandards.
@@ -211,7 +202,6 @@ ts::Standards ts::BinaryTable::definingStandards() const
 	return PSIRepository::Instance().getTableStandards(tableId(), _source_pid);
 }
 
-
 //----------------------------------------------------------------------------
 // Modifiable properties.
 //----------------------------------------------------------------------------
@@ -219,7 +209,7 @@ ts::Standards ts::BinaryTable::definingStandards() const
 void ts::BinaryTable::setTableIdExtension(uint16_t tid_ext, bool recompute_crc)
 {
 	_tid_ext = tid_ext;
-	for (const auto &it : _sections)
+	for (auto const &it : _sections)
 	{
 		if (!it.isNull())
 		{
@@ -231,7 +221,7 @@ void ts::BinaryTable::setTableIdExtension(uint16_t tid_ext, bool recompute_crc)
 void ts::BinaryTable::setVersion(uint8_t version, bool recompute_crc)
 {
 	_version = version;
-	for (const auto &it : _sections)
+	for (auto const &it : _sections)
 	{
 		if (!it.isNull())
 		{
@@ -243,7 +233,7 @@ void ts::BinaryTable::setVersion(uint8_t version, bool recompute_crc)
 void ts::BinaryTable::setSourcePID(PID pid)
 {
 	_source_pid = pid;
-	for (const auto &it : _sections)
+	for (auto const &it : _sections)
 	{
 		if (!it.isNull())
 		{
@@ -251,7 +241,6 @@ void ts::BinaryTable::setSourcePID(PID pid)
 		}
 	}
 }
-
 
 //----------------------------------------------------------------------------
 // Index of first and last TS packet of the table in the demultiplexed stream.
@@ -261,7 +250,7 @@ ts::PacketCounter ts::BinaryTable::firstTSPacketIndex() const
 {
 	bool found = false;
 	PacketCounter first = std::numeric_limits<PacketCounter>::max();
-	for (const auto &it : _sections)
+	for (auto const &it : _sections)
 	{
 		if (!it.isNull())
 		{
@@ -275,7 +264,7 @@ ts::PacketCounter ts::BinaryTable::firstTSPacketIndex() const
 ts::PacketCounter ts::BinaryTable::lastTSPacketIndex() const
 {
 	PacketCounter last = 0;
-	for (const auto &it : _sections)
+	for (auto const &it : _sections)
 	{
 		if (!it.isNull())
 		{
@@ -284,7 +273,6 @@ ts::PacketCounter ts::BinaryTable::lastTSPacketIndex() const
 	}
 	return last;
 }
-
 
 //----------------------------------------------------------------------------
 // Clear the content of the table. The table must be rebuilt
@@ -302,7 +290,6 @@ void ts::BinaryTable::clear()
 	_sections.clear();
 }
 
-
 //----------------------------------------------------------------------------
 // Return the total size in bytes of all sections in the table.
 //----------------------------------------------------------------------------
@@ -310,7 +297,7 @@ void ts::BinaryTable::clear()
 size_t ts::BinaryTable::totalSize() const
 {
 	size_t size = 0;
-	for (const auto &it : _sections)
+	for (auto const &it : _sections)
 	{
 		if (!it.isNull() && it->isValid())
 		{
@@ -320,7 +307,6 @@ size_t ts::BinaryTable::totalSize() const
 	return size;
 }
 
-
 //----------------------------------------------------------------------------
 // Minimum number of TS packets required to transport the table.
 //----------------------------------------------------------------------------
@@ -329,7 +315,6 @@ ts::PacketCounter ts::BinaryTable::packetCount(bool pack) const
 {
 	return Section::PacketCount(_sections, pack);
 }
-
 
 //----------------------------------------------------------------------------
 // Add several sections to a table
@@ -345,13 +330,12 @@ bool ts::BinaryTable::addSections(SectionPtrVector::const_iterator first, Sectio
 	return ok;
 }
 
-
 //----------------------------------------------------------------------------
 // A table is built by adding sections using addSection.
 // When all sections are present, the table becomes valid.
 //----------------------------------------------------------------------------
 
-bool ts::BinaryTable::addSection(const SectionPtr &sect, bool replace, bool grow)
+bool ts::BinaryTable::addSection(SectionPtr const &sect, bool replace, bool grow)
 {
 	// Reject invalid sections
 
@@ -362,7 +346,7 @@ bool ts::BinaryTable::addSection(const SectionPtr &sect, bool replace, bool grow
 
 	// Check the compatibility of the section with the table
 
-	const int index = sect->sectionNumber();
+	int const index = sect->sectionNumber();
 
 	if (_sections.size() == 0)
 	{
@@ -436,7 +420,6 @@ bool ts::BinaryTable::addSection(const SectionPtr &sect, bool replace, bool grow
 	return true;
 }
 
-
 //----------------------------------------------------------------------------
 // Pack all sections in a table, removing references to missing sections.
 //----------------------------------------------------------------------------
@@ -481,7 +464,6 @@ bool ts::BinaryTable::packSections()
 	}
 	return _is_valid;
 }
-
 
 //----------------------------------------------------------------------------
 // Check if this is a table with one short section.

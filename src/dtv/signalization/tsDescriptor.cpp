@@ -6,31 +6,30 @@
 //
 //----------------------------------------------------------------------------
 
+#include "tsDescriptor.h"
 #include "tsAbstractDescriptor.h"
 #include "tsAbstractTable.h"
-#include "tsDescriptor.h"
 #include "tsMemory.h"
 #include "tsNames.h"
 #include "tsPSIRepository.h"
-
 
 //----------------------------------------------------------------------------
 // Constructors for Descriptor
 // Note that the max size of a descriptor is 257 bytes: 2 (header) + 255
 //----------------------------------------------------------------------------
 
-ts::Descriptor::Descriptor(const void *addr, size_t size) :
-	_data(size >= 2 && size < 258 && (reinterpret_cast<const uint8_t *>(addr))[1] == size - 2 ? new ByteBlock(addr, size) : nullptr)
+ts::Descriptor::Descriptor(void const *addr, size_t size)
+	: _data(size >= 2 && size < 258 && (reinterpret_cast<uint8_t const *>(addr))[1] == size - 2 ? new ByteBlock(addr, size) : nullptr)
 {
 }
 
-ts::Descriptor::Descriptor(const ByteBlock &bb) :
-	_data(bb.size() >= 2 && bb.size() < 258 && bb[1] == bb.size() - 2 ? new ByteBlock(bb) : nullptr)
+ts::Descriptor::Descriptor(ByteBlock const &bb)
+	: _data(bb.size() >= 2 && bb.size() < 258 && bb[1] == bb.size() - 2 ? new ByteBlock(bb) : nullptr)
 {
 }
 
-ts::Descriptor::Descriptor(DID tag, const void *data, size_t size) :
-	_data(size < 256 ? new ByteBlock(size + 2) : nullptr)
+ts::Descriptor::Descriptor(DID tag, void const *data, size_t size)
+	: _data(size < 256 ? new ByteBlock(size + 2) : nullptr)
 {
 	if (!_data.isNull())
 	{
@@ -40,8 +39,8 @@ ts::Descriptor::Descriptor(DID tag, const void *data, size_t size) :
 	}
 }
 
-ts::Descriptor::Descriptor(DID tag, const ByteBlock &data) :
-	_data(data.size() < 256 ? new ByteBlock(2) : nullptr)
+ts::Descriptor::Descriptor(DID tag, ByteBlock const &data)
+	: _data(data.size() < 256 ? new ByteBlock(2) : nullptr)
 {
 	if (!_data.isNull())
 	{
@@ -51,7 +50,7 @@ ts::Descriptor::Descriptor(DID tag, const ByteBlock &data) :
 	}
 }
 
-ts::Descriptor::Descriptor(const ByteBlockPtr &bbp, ShareMode mode)
+ts::Descriptor::Descriptor(ByteBlockPtr const &bbp, ShareMode mode)
 {
 	if (!bbp.isNull() && bbp->size() >= 2 && bbp->size() < 258 && (*bbp)[1] == bbp->size() - 2)
 	{
@@ -70,7 +69,7 @@ ts::Descriptor::Descriptor(const ByteBlockPtr &bbp, ShareMode mode)
 	}
 }
 
-ts::Descriptor::Descriptor(const Descriptor &desc, ShareMode mode)
+ts::Descriptor::Descriptor(Descriptor const &desc, ShareMode mode)
 {
 	switch (mode)
 	{
@@ -86,17 +85,16 @@ ts::Descriptor::Descriptor(const Descriptor &desc, ShareMode mode)
 	}
 }
 
-ts::Descriptor::Descriptor(Descriptor &&desc) noexcept :
-	_data(std::move(desc._data))
+ts::Descriptor::Descriptor(Descriptor &&desc) noexcept
+	: _data(std::move(desc._data))
 {
 }
-
 
 //----------------------------------------------------------------------------
 // Assignment operators.
 //----------------------------------------------------------------------------
 
-ts::Descriptor &ts::Descriptor::operator=(const Descriptor &desc)
+ts::Descriptor &ts::Descriptor::operator=(Descriptor const &desc)
 {
 	if (&desc != this)
 	{
@@ -114,7 +112,7 @@ ts::Descriptor &ts::Descriptor::operator=(Descriptor &&desc) noexcept
 	return *this;
 }
 
-ts::Descriptor &ts::Descriptor::copy(const Descriptor &desc)
+ts::Descriptor &ts::Descriptor::copy(Descriptor const &desc)
 {
 	if (&desc != this)
 	{
@@ -123,12 +121,11 @@ ts::Descriptor &ts::Descriptor::copy(const Descriptor &desc)
 	return *this;
 }
 
-
 //----------------------------------------------------------------------------
 // Get the extended descriptor id.
 //----------------------------------------------------------------------------
 
-ts::EDID ts::Descriptor::edid(PDS pds, const AbstractTable *table) const
+ts::EDID ts::Descriptor::edid(PDS pds, AbstractTable const *table) const
 {
 	return edid(pds, table == nullptr ? TID(TID_NULL) : table->tableId());
 }
@@ -137,7 +134,7 @@ ts::EDID ts::Descriptor::edid(PDS pds, TID tid) const
 {
 	if (!isValid())
 	{
-		return EDID();  // invalid value.
+		return EDID(); // invalid value.
 	}
 	const DID did = tag();
 	if (tid != TID_NULL && names::HasTableSpecificName(did, tid))
@@ -167,13 +164,12 @@ ts::EDID ts::Descriptor::edid(PDS pds, TID tid) const
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Replace the payload of the descriptor. The tag is unchanged,
 // the size is adjusted.
 //----------------------------------------------------------------------------
 
-void ts::Descriptor::replacePayload(const void *addr, size_t size)
+void ts::Descriptor::replacePayload(void const *addr, size_t size)
 {
 	if (size > 255)
 	{
@@ -191,7 +187,6 @@ void ts::Descriptor::replacePayload(const void *addr, size_t size)
 		(*_data)[1] = uint8_t(_data->size() - 2);
 	}
 }
-
 
 //----------------------------------------------------------------------------
 // Resize (truncate or extend) the payload of the descriptor.
@@ -221,24 +216,22 @@ void ts::Descriptor::resizePayload(size_t new_size)
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Comparison
 //----------------------------------------------------------------------------
 
-bool ts::Descriptor::operator== (const Descriptor &desc) const
+bool ts::Descriptor::operator==(Descriptor const &desc) const
 {
 	return _data == desc._data ||
-		(_data.isNull() && desc._data.isNull()) ||
-		(!_data.isNull() && !desc._data.isNull() && *_data == *desc._data);
+		   (_data.isNull() && desc._data.isNull()) ||
+		   (!_data.isNull() && !desc._data.isNull() && *_data == *desc._data);
 }
-
 
 //----------------------------------------------------------------------------
 // Deserialize the descriptor.
 //----------------------------------------------------------------------------
 
-ts::AbstractDescriptorPtr ts::Descriptor::deserialize(DuckContext &duck, PDS pds, const AbstractTable *table) const
+ts::AbstractDescriptorPtr ts::Descriptor::deserialize(DuckContext &duck, PDS pds, AbstractTable const *table) const
 {
 	return deserialize(duck, pds, table == nullptr ? TID(TID_NULL) : table->tableId());
 }

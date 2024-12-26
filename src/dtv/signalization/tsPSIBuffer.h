@@ -28,6 +28,7 @@ namespace ts
 	class TSDUCKDLL PSIBuffer : public Buffer
 	{
 		TS_NOBUILD_NOCOPY(PSIBuffer);
+
 	public:
 		//!
 		//! Default constructor.
@@ -63,7 +64,7 @@ namespace ts
 		//! @param [in] data Address of data area to use as memory buffer.
 		//! @param [in] size Size in bytes of the data area.
 		//!
-		PSIBuffer(DuckContext &duck, const void *data, size_t size);
+		PSIBuffer(DuckContext &duck, void const *data, size_t size);
 
 		//!
 		//! Constructor over the payload of a read-only section which must remain unmodified as long as the PSIBuffer object is used and not reset.
@@ -73,13 +74,16 @@ namespace ts
 		//! @param [in,out] duck Reference to TSDuck execution context.
 		//! @param [in] section Section the payload of which is analysed by this PSIBuffer.
 		//!
-		PSIBuffer(DuckContext &duck, const Section &section);
+		PSIBuffer(DuckContext &duck, Section const &section);
 
 		//!
 		//! Get a reference to the associated TSDuck execution context.
 		//! @return A reference to the associated TSDuck execution context.
 		//!
-		DuckContext &duck() const { return _duck; }
+		DuckContext &duck() const
+		{
+			return _duck;
+		}
 
 		//!
 		//! Deserialize a 13-bit PID value.
@@ -106,7 +110,7 @@ namespace ts
 		//! @param [in] allow_empty If true, an empty string is allowed and serialized as zeroes.
 		//! @return True on success, false if there is not enough space to write (and set write error flag).
 		//!
-		bool putLanguageCode(const UString &str, bool allow_empty = false);
+		bool putLanguageCode(UString const &str, bool allow_empty = false);
 
 		//!
 		//! Read the next 24 bits as a 3-character language or country code and advance the read pointer.
@@ -134,7 +138,7 @@ namespace ts
 		//! @param [in] charset An optional specific character set to use instead of the default one.
 		//! @return True on success, false if there is not enough space to write (and set write error flag).
 		//!
-		bool putString(const UString &str, size_t start = 0, size_t count = NPOS, const Charset *charset = nullptr)
+		bool putString(UString const &str, size_t start = 0, size_t count = NPOS, Charset const *charset = nullptr)
 		{
 			return putStringCommon(str, start, count, &Charset::encode, false, 0, charset) != 0;
 		}
@@ -149,7 +153,7 @@ namespace ts
 		//! @param [in] charset An optional specific character set to use instead of the default one.
 		//! @return The number of serialized characters (which is usually not the same as the number of written bytes).
 		//!
-		size_t putPartialString(const UString &str, size_t start = 0, size_t count = NPOS, const Charset *charset = nullptr)
+		size_t putPartialString(UString const &str, size_t start = 0, size_t count = NPOS, Charset const *charset = nullptr)
 		{
 			return putStringCommon(str, start, count, &Charset::encode, true, 0, charset);
 		}
@@ -163,7 +167,7 @@ namespace ts
 		//! @param [in] charset An optional specific character set to use instead of the default one.
 		//! @return True on success, false if there is not enough space to write (and set write error flag).
 		//!
-		bool putStringWithByteLength(const UString &str, size_t start = 0, size_t count = NPOS, const Charset *charset = nullptr)
+		bool putStringWithByteLength(UString const &str, size_t start = 0, size_t count = NPOS, Charset const *charset = nullptr)
 		{
 			return putStringCommon(str, start, count, &Charset::encodeWithByteLength, false, 1, charset) != 0;
 		}
@@ -178,7 +182,7 @@ namespace ts
 		//! @param [in] charset An optional specific character set to use instead of the default one.
 		//! @return The number of serialized characters (which is usually not the same as the number of written bytes).
 		//!
-		size_t putPartialStringWithByteLength(const UString &str, size_t start = 0, size_t count = NPOS, const Charset *charset = nullptr)
+		size_t putPartialStringWithByteLength(UString const &str, size_t start = 0, size_t count = NPOS, Charset const *charset = nullptr)
 		{
 			return putStringCommon(str, start, count, &Charset::encodeWithByteLength, true, 1, charset);
 		}
@@ -192,7 +196,7 @@ namespace ts
 		//! @param [in] charset An optional specific character set to use instead of the default one.
 		//! @return True on success, false on error (truncated, unsupported format, etc.)
 		//!
-		bool getString(UString &str, size_t size = NPOS, const Charset *charset = nullptr);
+		bool getString(UString &str, size_t size = NPOS, Charset const *charset = nullptr);
 
 		//!
 		//! Get a string using the default input character set.
@@ -202,7 +206,7 @@ namespace ts
 		//! @param [in] charset An optional specific character set to use instead of the default one.
 		//! @return The decoded string.
 		//!
-		UString getString(size_t size = NPOS, const Charset *charset = nullptr);
+		UString getString(size_t size = NPOS, Charset const *charset = nullptr);
 
 		//!
 		//! Get a string (preceded by its one-byte length) using the default input character set.
@@ -211,7 +215,7 @@ namespace ts
 		//! @param [in] charset An optional specific character set to use instead of the default one.
 		//! @return True on success, false on error (truncated, unsupported format, etc.)
 		//!
-		bool getStringWithByteLength(UString &str, const Charset *charset = nullptr);
+		bool getStringWithByteLength(UString &str, Charset const *charset = nullptr);
 
 		//!
 		//! Get a string (preceded by its one-byte length) using the default input character set.
@@ -219,7 +223,7 @@ namespace ts
 		//! @param [in] charset An optional specific character set to use instead of the default one.
 		//! @return The decoded string.
 		//!
-		UString getStringWithByteLength(const Charset *charset = nullptr);
+		UString getStringWithByteLength(Charset const *charset = nullptr);
 
 		//!
 		//! Put (serialize) a duration in minutes as 4 BCD digits (HHMM), 2 bytes.
@@ -298,7 +302,7 @@ namespace ts
 		//! @param [in] count Maximum number of descriptors to serialize.
 		//! @return True on success, false if there is not enough space to write (and set write error flag).
 		//!
-		bool putDescriptorList(const DescriptorList &descs, size_t start = 0, size_t count = NPOS);
+		bool putDescriptorList(DescriptorList const &descs, size_t start = 0, size_t count = NPOS);
 
 		//!
 		//! Put (serialize) as many descriptors as possible from a descriptor list.
@@ -312,7 +316,7 @@ namespace ts
 		//! descriptors were serialized). In the first case, the returned index can be used as @a start
 		//! parameter to serialized the rest of the list (in another section for instance).
 		//!
-		size_t putPartialDescriptorList(const DescriptorList &descs, size_t start = 0, size_t count = NPOS);
+		size_t putPartialDescriptorList(DescriptorList const &descs, size_t start = 0, size_t count = NPOS);
 
 		//!
 		//! Put (serialize) a complete descriptor list with a 2-byte length field before the descriptor list.
@@ -331,7 +335,7 @@ namespace ts
 		//! @param [in] length_bits Number of meaningful bits in the length field.
 		//! @return True on success, false if there is not enough space to write (and set write error flag).
 		//!
-		bool putDescriptorListWithLength(const DescriptorList &descs, size_t start = 0, size_t count = NPOS, size_t length_bits = 12);
+		bool putDescriptorListWithLength(DescriptorList const &descs, size_t start = 0, size_t count = NPOS, size_t length_bits = 12);
 
 		//!
 		//! Put (serialize) as many descriptors as possible from a descriptor list with a 2-byte length field before the descriptor list.
@@ -349,7 +353,7 @@ namespace ts
 		//! descriptors were serialized). In the first case, the returned index can be used as @a start
 		//! parameter to serialized the rest of the list (in another section for instance).
 		//!
-		size_t putPartialDescriptorListWithLength(const DescriptorList &descs, size_t start = 0, size_t count = NPOS, size_t length_bits = 12);
+		size_t putPartialDescriptorListWithLength(DescriptorList const &descs, size_t start = 0, size_t count = NPOS, size_t length_bits = 12);
 
 		//!
 		//! Get (deserialize) a descriptor list.
@@ -390,11 +394,11 @@ namespace ts
 		DuckContext &_duck;
 
 		// Common profile of Charset encoding methods.
-		typedef size_t(Charset:: *EncodeMethod)(uint8_t *&, size_t &, const UString &, size_t, size_t) const;
+		typedef size_t (Charset::*EncodeMethod)(uint8_t *&, size_t &, UString const &, size_t, size_t) const;
 
 		// Common code the various putString functions.
 		// When partial == true, return the number of encoded characters.
 		// When partial == false, return 1 on success, 0 on error.
-		size_t putStringCommon(const UString &str, size_t start, size_t count, EncodeMethod em, bool partial, size_t min_req_size, const Charset *);
+		size_t putStringCommon(UString const &str, size_t start, size_t count, EncodeMethod em, bool partial, size_t min_req_size, Charset const *);
 	};
-}
+} // namespace ts

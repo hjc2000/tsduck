@@ -14,19 +14,21 @@
 #pragma once
 #include "tsStandards.h"
 
-namespace ts {
-    //!
-    //! Abstract base class for objects which are defined by standards.
-    //! @ingroup mpeg
-    //!
-    class TSDUCKDLL AbstractDefinedByStandards
-    {
-        TS_INTERFACE(AbstractDefinedByStandards);
-    public:
-        //!
-        //! Get the list of standards which define this object.
-        //! @return A bit mask of standards.
-        //!
-        virtual Standards definingStandards() const = 0;
-    };
-}
+namespace ts
+{
+	//!
+	//! Abstract base class for objects which are defined by standards.
+	//! @ingroup mpeg
+	//!
+	class TSDUCKDLL AbstractDefinedByStandards
+	{
+		TS_INTERFACE(AbstractDefinedByStandards);
+
+	public:
+		//!
+		//! Get the list of standards which define this object.
+		//! @return A bit mask of standards.
+		//!
+		virtual Standards definingStandards() const = 0;
+	};
+} // namespace ts

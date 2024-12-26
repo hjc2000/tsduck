@@ -6,34 +6,32 @@
 //
 //----------------------------------------------------------------------------
 
+#include "tsDuckContext.h"
 #include "tsARIBCharset.h"
 #include "tsCerrReport.h"
 #include "tsDVBCharTableSingleByte.h"
 #include "tsDVBCharTableUTF8.h"
-#include "tsDuckContext.h"
-
 
 //----------------------------------------------------------------------------
 // Constructor and destructors.
 //----------------------------------------------------------------------------
 
-ts::DuckContext::DuckContext(Report *report, std::ostream *output) :
-	_report(report != nullptr ? report : &CERR),
-	_initial_out(output != nullptr ? output : &std::cout),
-	_out(_initial_out),
-	_charsetIn(&DVBCharTableSingleByte::DVB_ISO_6937),  // default DVB charset
-	_charsetOut(&DVBCharTableSingleByte::DVB_ISO_6937),
-	_predefined_cas{ {CASID_CONAX_MIN,      u"conax"},
-					{CASID_IRDETO_MIN,     u"irdeto"},
-					{CASID_MEDIAGUARD_MIN, u"mediaguard"},
-					{CASID_NAGRA_MIN,      u"nagravision"},
-					{CASID_NDS_MIN,        u"nds"},
-					{CASID_SAFEACCESS,     u"safeaccess"},
-					{CASID_VIACCESS_MIN,   u"viaccess"},
-					{CASID_WIDEVINE_MIN,   u"widevine"} }
+ts::DuckContext::DuckContext(Report *report, std::ostream *output)
+	: _report(report != nullptr ? report : &CERR),
+	  _initial_out(output != nullptr ? output : &std::cout),
+	  _out(_initial_out),
+	  _charsetIn(&DVBCharTableSingleByte::DVB_ISO_6937), // default DVB charset
+	  _charsetOut(&DVBCharTableSingleByte::DVB_ISO_6937),
+	  _predefined_cas{{CASID_CONAX_MIN, u"conax"},
+					  {CASID_IRDETO_MIN, u"irdeto"},
+					  {CASID_MEDIAGUARD_MIN, u"mediaguard"},
+					  {CASID_NAGRA_MIN, u"nagravision"},
+					  {CASID_NDS_MIN, u"nds"},
+					  {CASID_SAFEACCESS, u"safeaccess"},
+					  {CASID_VIACCESS_MIN, u"viaccess"},
+					  {CASID_WIDEVINE_MIN, u"widevine"}}
 {
 }
-
 
 //----------------------------------------------------------------------------
 // Reset the TSDuck context to initial configuration.
@@ -55,7 +53,6 @@ void ts::DuckContext::reset()
 	_timeReference = 0;
 }
 
-
 //----------------------------------------------------------------------------
 // Set a new report for log and error messages.
 //----------------------------------------------------------------------------
@@ -65,21 +62,19 @@ void ts::DuckContext::setReport(Report *report)
 	_report = report != nullptr ? report : &CERR;
 }
 
-
 //----------------------------------------------------------------------------
 // Set the DVB character sets (default DVB character set if null).
 //----------------------------------------------------------------------------
 
-void ts::DuckContext::setDefaultCharsetIn(const Charset *charset)
+void ts::DuckContext::setDefaultCharsetIn(Charset const *charset)
 {
 	_charsetIn = charset != nullptr ? charset : &DVBCharTableSingleByte::DVB_ISO_6937;
 }
 
-void ts::DuckContext::setDefaultCharsetOut(const Charset *charset)
+void ts::DuckContext::setDefaultCharsetOut(Charset const *charset)
 {
 	_charsetOut = charset != nullptr ? charset : &DVBCharTableSingleByte::DVB_ISO_6937;
 }
-
 
 //----------------------------------------------------------------------------
 // Update the list of standards which are present in the context.
@@ -89,7 +84,7 @@ void ts::DuckContext::addStandards(Standards mask)
 {
 	if (_report->debug() && (_accStandards | mask) != _accStandards)
 	{
-		_report->debug(u"adding standards %s to %s", { StandardsNames(mask), StandardsNames(_accStandards) });
+		_report->debug(u"adding standards %s to %s", {StandardsNames(mask), StandardsNames(_accStandards)});
 	}
 	_accStandards |= mask;
 }
@@ -100,10 +95,9 @@ void ts::DuckContext::resetStandards(Standards mask)
 
 	if (_report->debug())
 	{
-		_report->debug(u"resetting standards to %s", { StandardsNames(_accStandards) });
+		_report->debug(u"resetting standards to %s", {StandardsNames(_accStandards)});
 	}
 }
-
 
 //----------------------------------------------------------------------------
 // The actual CAS id to use.
@@ -118,7 +112,6 @@ uint16_t ts::DuckContext::casId(uint16_t cas) const
 {
 	return cas == CASID_NULL ? _casId : cas;
 }
-
 
 //----------------------------------------------------------------------------
 // The actual private data specifier to use.
@@ -159,7 +152,6 @@ ts::PDS ts::DuckContext::actualPDS(PDS pds) const
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Registration ids (from MPEG-defined registration_descriptor).
 //----------------------------------------------------------------------------
@@ -179,12 +171,11 @@ void ts::DuckContext::resetRegistrationIds()
 	_registrationIds.clear();
 }
 
-
 //----------------------------------------------------------------------------
 // Name of the default region for UVH and VHF band frequency layout.
 //----------------------------------------------------------------------------
 
-void ts::DuckContext::setDefaultHFRegion(const UString &region)
+void ts::DuckContext::setDefaultHFRegion(UString const &region)
 {
 	_hfDefaultRegion = region;
 }
@@ -198,8 +189,8 @@ void ts::DuckContext::flush()
 	// Flush the output.
 	_out->flush();
 
-	// On Unix, we must force the lower-level standard output.
-	#if defined(TS_UNIX)
+// On Unix, we must force the lower-level standard output.
+#if defined(TS_UNIX)
 	if (_out == &std::cout)
 	{
 		::fflush(stdout);
@@ -210,9 +201,8 @@ void ts::DuckContext::flush()
 		::fflush(stderr);
 		::fsync(STDERR_FILENO);
 	}
-	#endif
+#endif
 }
-
 
 //----------------------------------------------------------------------------
 // Redirect the output stream to a file.
@@ -231,7 +221,7 @@ void ts::DuckContext::setOutput(std::ostream *stream, bool override)
 	}
 }
 
-bool ts::DuckContext::setOutput(const fs::path &fileName, bool override)
+bool ts::DuckContext::setOutput(fs::path const &fileName, bool override)
 {
 	// Do not override output if not standard output (or explicit override).
 	if (override || _out == &std::cout)
@@ -246,11 +236,11 @@ bool ts::DuckContext::setOutput(const fs::path &fileName, bool override)
 		// Open new file if any.
 		if (!fileName.empty() && fileName != u"-")
 		{
-			_report->verbose(u"creating %s", { fileName });
+			_report->verbose(u"creating %s", {fileName});
 			_outFile.open(fileName, std::ios::out);
 			if (!_outFile)
 			{
-				_report->error(u"cannot create %s", { fileName });
+				_report->error(u"cannot create %s", {fileName});
 				return false;
 			}
 			_out = &_outFile;
@@ -263,15 +253,15 @@ bool ts::DuckContext::setOutput(const fs::path &fileName, bool override)
 // An opaque class to save all command line options, as loaded by loadArgs().
 //----------------------------------------------------------------------------
 
-ts::DuckContext::SavedArgs::SavedArgs() :
-	_definedCmdOptions(0),
-	_cmdStandards(Standards::NONE),
-	_charsetInName(),
-	_charsetOutName(),
-	_casId(CASID_NULL),
-	_defaultPDS(0),
-	_hfDefaultRegion(),
-	_timeReference(0)
+ts::DuckContext::SavedArgs::SavedArgs()
+	: _definedCmdOptions(0),
+	  _cmdStandards(Standards::NONE),
+	  _charsetInName(),
+	  _charsetOutName(),
+	  _casId(CASID_NULL),
+	  _defaultPDS(0),
+	  _hfDefaultRegion(),
+	  _timeReference(0)
 {
 }
 
@@ -287,7 +277,7 @@ void ts::DuckContext::saveArgs(SavedArgs &args) const
 	args._timeReference = _timeReference;
 }
 
-void ts::DuckContext::restoreArgs(const SavedArgs &args)
+void ts::DuckContext::restoreArgs(SavedArgs const &args)
 {
 	if (args._definedCmdOptions & CMD_STANDARDS)
 	{
@@ -296,8 +286,8 @@ void ts::DuckContext::restoreArgs(const SavedArgs &args)
 	}
 	if (args._definedCmdOptions & CMD_CHARSET)
 	{
-		const Charset *in = DVBCharTable::GetCharset(args._charsetInName);
-		const Charset *out = DVBCharTable::GetCharset(args._charsetOutName);
+		Charset const *in = DVBCharTable::GetCharset(args._charsetInName);
+		Charset const *out = DVBCharTable::GetCharset(args._charsetOutName);
 		if (in != nullptr)
 		{
 			_charsetIn = in;

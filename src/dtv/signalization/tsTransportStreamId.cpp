@@ -9,17 +9,15 @@
 #include "tsTransportStreamId.h"
 #include "tsUString.h"
 
-
 //----------------------------------------------------------------------------
 // Constructor.
 //----------------------------------------------------------------------------
 
-ts::TransportStreamId::TransportStreamId(uint16_t tsid, uint16_t onid) :
-    transport_stream_id(tsid),
-    original_network_id(onid)
+ts::TransportStreamId::TransportStreamId(uint16_t tsid, uint16_t onid)
+	: transport_stream_id(tsid),
+	  original_network_id(onid)
 {
 }
-
 
 //----------------------------------------------------------------------------
 // Clear the content of this object.
@@ -27,9 +25,8 @@ ts::TransportStreamId::TransportStreamId(uint16_t tsid, uint16_t onid) :
 
 void ts::TransportStreamId::clear()
 {
-    transport_stream_id = original_network_id = 0;
+	transport_stream_id = original_network_id = 0;
 }
-
 
 //----------------------------------------------------------------------------
 // Implementation of StringifyInterface.
@@ -37,5 +34,5 @@ void ts::TransportStreamId::clear()
 
 ts::UString ts::TransportStreamId::toString() const
 {
-    return UString::Format(u"TS: 0x%X (%<d), O.Net:0x%X (%<d)", {transport_stream_id, original_network_id});
+	return UString::Format(u"TS: 0x%X (%<d), O.Net:0x%X (%<d)", {transport_stream_id, original_network_id});
 }

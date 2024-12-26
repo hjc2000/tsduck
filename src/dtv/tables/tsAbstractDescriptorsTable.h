@@ -45,20 +45,20 @@ namespace ts
 		//! @param [in] version Table version number.
 		//! @param [in] is_current True if table is current, false if table is next.
 		//!
-		AbstractDescriptorsTable(TID tid, const UChar *xml_name, Standards standards, uint16_t tid_ext, uint8_t version, bool is_current);
+		AbstractDescriptorsTable(TID tid, UChar const *xml_name, Standards standards, uint16_t tid_ext, uint8_t version, bool is_current);
 
 		//!
 		//! Copy constructor.
 		//! @param [in] other Other instance to copy.
 		//!
-		AbstractDescriptorsTable(const AbstractDescriptorsTable &other);
+		AbstractDescriptorsTable(AbstractDescriptorsTable const &other);
 
 		//!
 		//! Assignment operator.
 		//! @param [in] other Other instance to copy.
 		//! @return A reference to this object.
 		//!
-		AbstractDescriptorsTable &operator=(const AbstractDescriptorsTable &other) = default;
+		AbstractDescriptorsTable &operator=(AbstractDescriptorsTable const &other) = default;
 
 		//!
 		//! Constructor from a binary table.
@@ -68,14 +68,14 @@ namespace ts
 		//! @param [in] standards A bit mask of standards which define this structure.
 		//! @param [in] table Binary table to deserialize.
 		//!
-		AbstractDescriptorsTable(DuckContext &duck, TID tid, const UChar *xml_name, Standards standards, const BinaryTable &table);
+		AbstractDescriptorsTable(DuckContext &duck, TID tid, UChar const *xml_name, Standards standards, BinaryTable const &table);
 
 		// Inherited methods
 		virtual void clearContent() override;
 		virtual void serializePayload(BinaryTable &, PSIBuffer &) const override;
-		virtual void deserializePayload(PSIBuffer &, const Section &) override;
+		virtual void deserializePayload(PSIBuffer &, Section const &) override;
 
 	private:
 		AbstractDescriptorsTable() = delete;
 	};
-}
+} // namespace ts

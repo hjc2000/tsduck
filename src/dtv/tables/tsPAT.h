@@ -31,9 +31,9 @@ namespace ts
 		typedef std::map<uint16_t, PID> ServiceMap;
 
 		// Public members:
-		uint16_t   ts_id = 0;          //!< Transport stream id.
-		PID        nit_pid = PID_NIT;  //!< PID for NIT.
-		ServiceMap pmts{};            //!< Map of PMT PID's: key=service_id, value=pmt_pid.
+		uint16_t ts_id = 0;    //!< Transport stream id.
+		PID nit_pid = PID_NIT; //!< PID for NIT.
+		ServiceMap pmts{};     //!< Map of PMT PID's: key=service_id, value=pmt_pid.
 
 		//!
 		//! Default constructor.
@@ -42,17 +42,17 @@ namespace ts
 		//! @param [in] ts_id Transport stream identifier.
 		//! @param [in] nit_pid PID of the NIT. Default: DVB-defined PID for NIT.
 		//!
-		PAT(uint8_t  version = 0,
-			bool     is_current = true,
+		PAT(uint8_t version = 0,
+			bool is_current = true,
 			uint16_t ts_id = 0,
-			PID      nit_pid = PID_NIT);
+			PID nit_pid = PID_NIT);
 
 		//!
 		//! Constructor from a binary table.
 		//! @param [in,out] duck TSDuck execution context.
 		//! @param [in] table Binary table to deserialize.
 		//!
-		PAT(DuckContext &duck, const BinaryTable &table);
+		PAT(DuckContext &duck, BinaryTable const &table);
 
 		// Inherited methods
 		virtual bool isPrivate() const override;
@@ -62,6 +62,6 @@ namespace ts
 		// Inherited methods
 		virtual void clearContent() override;
 		virtual void serializePayload(BinaryTable &, PSIBuffer &) const override;
-		virtual void deserializePayload(PSIBuffer &, const Section &) override;
+		virtual void deserializePayload(PSIBuffer &, Section const &) override;
 	};
-}
+} // namespace ts

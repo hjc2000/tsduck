@@ -6,35 +6,34 @@
 //
 //----------------------------------------------------------------------------
 
+#include "tsDescriptorList.h"
 #include "tsAbstractDescriptor.h"
 #include "tsAbstractTable.h"
-#include "tsDescriptorList.h"
 #include "tsDuckContext.h"
 #include "tsFatal.h"
-
 
 //----------------------------------------------------------------------------
 // Constructor and assignment.
 //----------------------------------------------------------------------------
 
-ts::DescriptorList::DescriptorList(const AbstractTable *table) :
-	_table(table)
+ts::DescriptorList::DescriptorList(AbstractTable const *table)
+	: _table(table)
 {
 }
 
-ts::DescriptorList::DescriptorList(const AbstractTable *table, const DescriptorList &dl) :
-	_table(table),
-	_list(dl._list)
+ts::DescriptorList::DescriptorList(AbstractTable const *table, DescriptorList const &dl)
+	: _table(table),
+	  _list(dl._list)
 {
 }
 
-ts::DescriptorList::DescriptorList(const AbstractTable *table, DescriptorList &&dl) noexcept :
-	_table(table),
-	_list(std::move(dl._list))
+ts::DescriptorList::DescriptorList(AbstractTable const *table, DescriptorList &&dl) noexcept
+	: _table(table),
+	  _list(std::move(dl._list))
 {
 }
 
-ts::DescriptorList &ts::DescriptorList::operator=(const DescriptorList &dl)
+ts::DescriptorList &ts::DescriptorList::operator=(DescriptorList const &dl)
 {
 	if (&dl != this)
 	{
@@ -54,7 +53,6 @@ ts::DescriptorList &ts::DescriptorList::operator=(DescriptorList &&dl) noexcept
 	return *this;
 }
 
-
 //----------------------------------------------------------------------------
 // Get the table id of the parent table.
 //----------------------------------------------------------------------------
@@ -64,12 +62,11 @@ ts::TID ts::DescriptorList::tableId() const
 	return _table == nullptr ? TID(TID_NULL) : _table->tableId();
 }
 
-
 //----------------------------------------------------------------------------
 // Comparison
 //----------------------------------------------------------------------------
 
-bool ts::DescriptorList::operator==(const DescriptorList &other) const
+bool ts::DescriptorList::operator==(DescriptorList const &other) const
 {
 	if (_list.size() != other._list.size())
 	{
@@ -77,8 +74,8 @@ bool ts::DescriptorList::operator==(const DescriptorList &other) const
 	}
 	for (size_t i = 0; i < _list.size(); ++i)
 	{
-		const DescriptorPtr &desc1(_list[i].desc);
-		const DescriptorPtr &desc2(other._list[i].desc);
+		DescriptorPtr const &desc1(_list[i].desc);
+		DescriptorPtr const &desc2(other._list[i].desc);
 		if (desc1.isNull() || desc2.isNull() || *desc1 != *desc2)
 		{
 			return false;
@@ -87,12 +84,11 @@ bool ts::DescriptorList::operator==(const DescriptorList &other) const
 	return true;
 }
 
-
 //----------------------------------------------------------------------------
 // Add one descriptor at end of list
 //----------------------------------------------------------------------------
 
-bool ts::DescriptorList::add(const DescriptorPtr &desc)
+bool ts::DescriptorList::add(DescriptorPtr const &desc)
 {
 	PDS pds = 0;
 
@@ -124,26 +120,24 @@ bool ts::DescriptorList::add(const DescriptorPtr &desc)
 	return true;
 }
 
-
 //----------------------------------------------------------------------------
 // Add one descriptor at end of list
 //----------------------------------------------------------------------------
 
-bool ts::DescriptorList::add(DuckContext &duck, const AbstractDescriptor &desc)
+bool ts::DescriptorList::add(DuckContext &duck, AbstractDescriptor const &desc)
 {
 	DescriptorPtr pd(new Descriptor);
 	CheckNonNull(pd.pointer());
 	return desc.serialize(duck, *pd) && add(pd);
 }
 
-
 //----------------------------------------------------------------------------
 // Add descriptors from a memory area
 //----------------------------------------------------------------------------
 
-bool ts::DescriptorList::add(const void *data, size_t size)
+bool ts::DescriptorList::add(void const *data, size_t size)
 {
-	const uint8_t *desc = reinterpret_cast<const uint8_t *>(data);
+	uint8_t const *desc = reinterpret_cast<uint8_t const *>(data);
 	size_t length = 0;
 	bool success = true;
 
@@ -157,12 +151,11 @@ bool ts::DescriptorList::add(const void *data, size_t size)
 	return success && size == 0;
 }
 
-
 //----------------------------------------------------------------------------
 // Merge one descriptor in the list.
 //----------------------------------------------------------------------------
 
-void ts::DescriptorList::merge(DuckContext &duck, const AbstractDescriptor &desc)
+void ts::DescriptorList::merge(DuckContext &duck, AbstractDescriptor const &desc)
 {
 	// Serialize the new descriptor. In case of error, there is nothing we can add.
 	DescriptorPtr bindesc(new Descriptor);
@@ -174,12 +167,12 @@ void ts::DescriptorList::merge(DuckContext &duck, const AbstractDescriptor &desc
 	}
 
 	const PDS pds = desc.requiredPDS();
-	const DescriptorDuplication mode = desc.duplicationMode();
+	DescriptorDuplication const mode = desc.duplicationMode();
 
 	// We need to search for a descriptor of same type only if the duplication mode is not simply ADD_ALWAYS.
 	if (mode != DescriptorDuplication::ADD_ALWAYS)
 	{
-		const size_t index = search(desc.edid());
+		size_t const index = search(desc.edid());
 		if (index < count())
 		{
 			// A descriptor of same type has been found.
@@ -200,7 +193,7 @@ void ts::DescriptorList::merge(DuckContext &duck, const AbstractDescriptor &desc
 				{
 					// New descriptor shall be merged into old one.
 					// We need to deserialize the previous descriptor first.
-					const AbstractDescriptorPtr dp(_list[index].desc->deserialize(duck, pds, _table));
+					AbstractDescriptorPtr const dp(_list[index].desc->deserialize(duck, pds, _table));
 					if (!dp.isNull() && dp->merge(desc))
 					{
 						// Descriptor successfully merged. Reserialize it and replace it.
@@ -241,20 +234,18 @@ void ts::DescriptorList::merge(DuckContext &duck, const AbstractDescriptor &desc
 	add(bindesc);
 }
 
-
-
 //----------------------------------------------------------------------------
 // Merge another descriptor list in this list.
 //----------------------------------------------------------------------------
 
-void ts::DescriptorList::merge(DuckContext &duck, const DescriptorList &other)
+void ts::DescriptorList::merge(DuckContext &duck, DescriptorList const &other)
 {
 	if (&other != this)
 	{
 		for (size_t index = 0; index < other._list.size(); ++index)
 		{
 			// The descriptor from the other list must be deserialized to be merged.
-			const AbstractDescriptorPtr dp(other._list[index].desc->deserialize(duck, other._list[index].pds, other._table));
+			AbstractDescriptorPtr const dp(other._list[index].desc->deserialize(duck, other._list[index].pds, other._table));
 			if (dp.isNull() || dp->duplicationMode() == DescriptorDuplication::ADD_ALWAYS)
 			{
 				// Cannot be deserialized or simply add the descriptor.
@@ -270,17 +261,15 @@ void ts::DescriptorList::merge(DuckContext &duck, const DescriptorList &other)
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Get a reference to the descriptor at a specified index.
 //----------------------------------------------------------------------------
 
-const ts::DescriptorPtr &ts::DescriptorList::operator[](size_t index) const
+ts::DescriptorPtr const &ts::DescriptorList::operator[](size_t index) const
 {
 	assert(index < _list.size());
 	return _list[index].desc;
 }
-
 
 //----------------------------------------------------------------------------
 // Get the extended descriptor id of a descriptor in the list.
@@ -299,7 +288,6 @@ ts::EDID ts::DescriptorList::edid(size_t index) const
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Return the "private data specifier" associated to a descriptor in the list.
 //----------------------------------------------------------------------------
@@ -308,7 +296,6 @@ ts::PDS ts::DescriptorList::privateDataSpecifier(size_t index) const
 {
 	return index < _list.size() ? _list[index].pds : PDS_NULL;
 }
-
 
 //----------------------------------------------------------------------------
 // Prepare removal of a private_data_specifier descriptor.
@@ -351,7 +338,6 @@ bool ts::DescriptorList::prepareRemovePDS(ElementVector::iterator it)
 	return true;
 }
 
-
 //----------------------------------------------------------------------------
 // Add a private_data_specifier if necessary at end of list
 //----------------------------------------------------------------------------
@@ -369,7 +355,6 @@ void ts::DescriptorList::addPrivateDataSpecifier(PDS pds)
 	}
 }
 
-
 //----------------------------------------------------------------------------
 // Remove all private descriptors without preceding
 // private_data_specifier_descriptor.
@@ -380,7 +365,7 @@ size_t ts::DescriptorList::removeInvalidPrivateDescriptors()
 {
 	size_t count = 0;
 
-	for (size_t n = 0; n < _list.size(); )
+	for (size_t n = 0; n < _list.size();)
 	{
 		if (_list[n].pds == 0 && !_list[n].desc.isNull() && _list[n].desc->isValid() && _list[n].desc->tag() >= 0x80)
 		{
@@ -395,7 +380,6 @@ size_t ts::DescriptorList::removeInvalidPrivateDescriptors()
 
 	return count;
 }
-
 
 //----------------------------------------------------------------------------
 // Remove the descriptor at the specified index in the list.
@@ -420,17 +404,16 @@ bool ts::DescriptorList::removeByIndex(size_t index)
 	return true;
 }
 
-
 //----------------------------------------------------------------------------
 // Remove all descriptors with the specified tag.
 //----------------------------------------------------------------------------
 
 size_t ts::DescriptorList::removeByTag(DID tag, PDS pds)
 {
-	const bool check_pds = pds != 0 && tag >= 0x80;
+	bool const check_pds = pds != 0 && tag >= 0x80;
 	size_t removed_count = 0;
 
-	for (auto it = _list.begin(); it != _list.end(); )
+	for (auto it = _list.begin(); it != _list.end();)
 	{
 		const DID itag = it->desc->tag();
 		if (itag == tag && (!check_pds || it->pds == pds) && (itag != DID_PRIV_DATA_SPECIF || prepareRemovePDS(it)))
@@ -446,7 +429,6 @@ size_t ts::DescriptorList::removeByTag(DID tag, PDS pds)
 
 	return removed_count;
 }
-
 
 //----------------------------------------------------------------------------
 // Total number of bytes that is required to serialize the list of descriptors.
@@ -466,7 +448,6 @@ size_t ts::DescriptorList::binarySize(size_t start, size_t count) const
 	return size;
 }
 
-
 //----------------------------------------------------------------------------
 // Serialize the content of the descriptor list.
 //----------------------------------------------------------------------------
@@ -485,7 +466,6 @@ size_t ts::DescriptorList::serialize(uint8_t *&addr, size_t &size, size_t start)
 	return i;
 }
 
-
 //----------------------------------------------------------------------------
 // Serialize the content of the descriptor list in a byte block.
 //----------------------------------------------------------------------------
@@ -493,7 +473,7 @@ size_t ts::DescriptorList::serialize(uint8_t *&addr, size_t &size, size_t start)
 size_t ts::DescriptorList::serialize(ByteBlock &bb, size_t start) const
 {
 	// Keep track of byte block size before serializing the descriptor list.
-	const size_t previous_size = bb.size();
+	size_t const previous_size = bb.size();
 
 	// Increase the byte block size by the max size of a descriptor list.
 	size_t added_size = 0xFFFF;
@@ -513,7 +493,6 @@ size_t ts::DescriptorList::serialize(ByteBlock &bb, size_t start) const
 	bb.resize(previous_size + added_size);
 	return added_size;
 }
-
 
 //----------------------------------------------------------------------------
 // Same as Serialize, but prepend a 2-byte length field before the list.
@@ -541,7 +520,6 @@ size_t ts::DescriptorList::lengthSerialize(uint8_t *&addr, size_t &size, size_t 
 	return result;
 }
 
-
 //----------------------------------------------------------------------------
 // Search a descriptor with the specified tag, starting at the
 // specified index.
@@ -560,12 +538,11 @@ size_t ts::DescriptorList::search(DID tag, size_t start_index, PDS pds) const
 	return index;
 }
 
-
 //----------------------------------------------------------------------------
 // Search a descriptor with the specified extended tag.
 //----------------------------------------------------------------------------
 
-size_t ts::DescriptorList::search(const ts::EDID &edid, size_t start_index) const
+size_t ts::DescriptorList::search(ts::EDID const &edid, size_t start_index) const
 {
 	// If the EDID is table-specific, check that we are in the same table.
 	// In the case the table of the descriptor list is unknown, assume that the table matches.
@@ -585,12 +562,11 @@ size_t ts::DescriptorList::search(const ts::EDID &edid, size_t start_index) cons
 	return index;
 }
 
-
 //----------------------------------------------------------------------------
 // Search a descriptor for the specified language.
 //----------------------------------------------------------------------------
 
-size_t ts::DescriptorList::searchLanguage(const DuckContext &duck, const UString &language, size_t start_index) const
+size_t ts::DescriptorList::searchLanguage(DuckContext const &duck, UString const &language, size_t start_index) const
 {
 	// Check that an actual language code was provided.
 	if (language.size() != 3)
@@ -599,20 +575,20 @@ size_t ts::DescriptorList::searchLanguage(const DuckContext &duck, const UString
 	}
 
 	// Standards of the context and the parent table.
-	const Standards standards = duck.standards() | (_table == nullptr ? Standards::NONE : _table->definingStandards());
-	const bool atsc = bool(standards & Standards::ATSC);
-	const bool isdb = bool(standards & Standards::ISDB);
+	Standards const standards = duck.standards() | (_table == nullptr ? Standards::NONE : _table->definingStandards());
+	bool const atsc = bool(standards & Standards::ATSC);
+	bool const isdb = bool(standards & Standards::ISDB);
 
 	// Seach all known types of descriptors containing languages.
 	for (size_t index = start_index; index < _list.size(); index++)
 	{
-		const DescriptorPtr &desc(_list[index].desc);
+		DescriptorPtr const &desc(_list[index].desc);
 		if (!desc.isNull() && desc->isValid())
 		{
 
 			const DID tag = desc->tag();
 			const PDS pds = _list[index].pds;
-			const uint8_t *data = desc->payload();
+			uint8_t const *data = desc->payload();
 			size_t size = desc->payloadSize();
 
 			if (tag == DID_LANGUAGE)
@@ -623,7 +599,8 @@ size_t ts::DescriptorList::searchLanguage(const DuckContext &duck, const UString
 					{
 						return index;
 					}
-					data += 4; size -= 4;
+					data += 4;
+					size -= 4;
 				}
 			}
 			else if (tag == DID_COMPONENT && size >= 6 && language.similar(data + 3, 3))
@@ -638,7 +615,8 @@ size_t ts::DescriptorList::searchLanguage(const DuckContext &duck, const UString
 					{
 						return index;
 					}
-					data += 8; size -= 8;
+					data += 8;
+					size -= 8;
 				}
 			}
 			else if (tag == DID_TELETEXT || tag == DID_VBI_TELETEXT)
@@ -649,7 +627,8 @@ size_t ts::DescriptorList::searchLanguage(const DuckContext &duck, const UString
 					{
 						return index;
 					}
-					data += 5; size -= 5;
+					data += 5;
+					size -= 5;
 				}
 			}
 			else if (tag == DID_MLINGUAL_COMPONENT || tag == DID_MLINGUAL_BOUQUET || tag == DID_MLINGUAL_NETWORK)
@@ -657,7 +636,8 @@ size_t ts::DescriptorList::searchLanguage(const DuckContext &duck, const UString
 				if (tag == DID_MLINGUAL_COMPONENT && size > 0)
 				{
 					// Skip leading component_tag in multilingual_component_descriptor.
-					data++; size--;
+					data++;
+					size--;
 				}
 				while (size >= 4)
 				{
@@ -665,8 +645,9 @@ size_t ts::DescriptorList::searchLanguage(const DuckContext &duck, const UString
 					{
 						return index;
 					}
-					const size_t len = std::min<size_t>(4 + data[3], size);
-					data += len; size -= len;
+					size_t const len = std::min<size_t>(4 + data[3], size);
+					data += len;
+					size -= len;
 				}
 			}
 			else if (tag == DID_MLINGUAL_SERVICE)
@@ -682,7 +663,8 @@ size_t ts::DescriptorList::searchLanguage(const DuckContext &duck, const UString
 					{
 						len = std::min<size_t>(len + 1 + data[len], size);
 					}
-					data += len; size -= len;
+					data += len;
+					size -= len;
 				}
 			}
 			else if (tag == DID_SHORT_EVENT && size >= 3 && language.similar(data, 3))
@@ -695,14 +677,16 @@ size_t ts::DescriptorList::searchLanguage(const DuckContext &duck, const UString
 			}
 			else if ((atsc || pds == PDS_ATSC) && tag == DID_ATSC_CAPTION && size > 0)
 			{
-				data++; size--;
+				data++;
+				size--;
 				while (size >= 6)
 				{
 					if (language.similar(data, 3))
 					{
 						return index;
 					}
-					data += 6; size -= 6;
+					data += 6;
+					size -= 6;
 				}
 			}
 			else if ((isdb || pds == PDS_ISDB) && tag == DID_ISDB_AUDIO_COMP)
@@ -733,12 +717,11 @@ size_t ts::DescriptorList::searchLanguage(const DuckContext &duck, const UString
 	return count(); // not found
 }
 
-
 //----------------------------------------------------------------------------
 // Search any kind of subtitle descriptor.
 //----------------------------------------------------------------------------
 
-size_t ts::DescriptorList::searchSubtitle(const UString &language, size_t start_index) const
+size_t ts::DescriptorList::searchSubtitle(UString const &language, size_t start_index) const
 {
 	// Value to return if not found
 	size_t not_found = count();
@@ -747,7 +730,7 @@ size_t ts::DescriptorList::searchSubtitle(const UString &language, size_t start_
 	{
 
 		const DID tag = _list[index].desc->tag();
-		const uint8_t *desc = _list[index].desc->payload();
+		uint8_t const *desc = _list[index].desc->payload();
 		size_t size = _list[index].desc->payloadSize();
 
 		if (tag == DID_SUBTITLING)

@@ -13,8 +13,8 @@
 
 #pragma once
 #include "tsAbstractDefinedByStandards.h"
-#include "tsTS.h"
 #include "tsTablesPtr.h"
+#include "tsTS.h"
 
 namespace ts
 {
@@ -48,7 +48,7 @@ namespace ts
 		//! @param [in] mode The sections are either shared (ShareMode::SHARE) between the
 		//! two tables or duplicated (ShareMode::COPY).
 		//!
-		BinaryTable(const BinaryTable &table, ShareMode mode);
+		BinaryTable(BinaryTable const &table, ShareMode mode);
 
 		//!
 		//! Move constructor.
@@ -66,7 +66,7 @@ namespace ts
 		//! may be greater than the current "last_section_number" of the table.
 		//! In this case, all sections which were previously added in the table are modified.
 		//!
-		BinaryTable(const SectionPtrVector &sections, bool replace = true, bool grow = true);
+		BinaryTable(SectionPtrVector const &sections, bool replace = true, bool grow = true);
 
 		//!
 		//! Assignment operator.
@@ -74,7 +74,7 @@ namespace ts
 		//! @param [in] table Other table to assign to this object.
 		//! @return A reference to this object.
 		//!
-		BinaryTable &operator=(const BinaryTable &table);
+		BinaryTable &operator=(BinaryTable const &table);
 
 		//!
 		//! Move assignment operator.
@@ -90,7 +90,7 @@ namespace ts
 		//! @param [in] table Other table to duplicate into this object.
 		//! @return A reference to this object.
 		//!
-		BinaryTable &copy(const BinaryTable &table);
+		BinaryTable &copy(BinaryTable const &table);
 
 		//!
 		//! Equality operator.
@@ -99,7 +99,7 @@ namespace ts
 		//! @param [in] table Other table to compare.
 		//! @return True if the two tables are identical. False otherwise.
 		//!
-		bool operator==(const BinaryTable &table) const;
+		bool operator==(BinaryTable const &table) const;
 
 		//!
 		//! Add a section to a table.
@@ -112,7 +112,7 @@ namespace ts
 		//! In this case, all sections which were previously added in the table are modified.
 		//! @return True on succes, false if @a section could not be added (inconsistent property).
 		//!
-		bool addSection(const SectionPtr &section, bool replace = true, bool grow = true);
+		bool addSection(SectionPtr const &section, bool replace = true, bool grow = true);
 
 		//!
 		//! Add several sections to a table.
@@ -125,7 +125,7 @@ namespace ts
 		//! In this case, all sections which were previously added in the table are modified.
 		//! @return True on succes, false if a section could not be added (inconsistent property).
 		//!
-		bool addSections(const SectionPtrVector &sections, bool replace = true, bool grow = true)
+		bool addSections(SectionPtrVector const &sections, bool replace = true, bool grow = true)
 		{
 			return addSections(sections.begin(), sections.end(), replace, grow);
 		}
@@ -160,7 +160,10 @@ namespace ts
 		//! @return True if the table is valid (all consistent sections are present with same
 		//! table id, same version, same "last_section_number").
 		//!
-		bool isValid() const { return _is_valid; }
+		bool isValid() const
+		{
+			return _is_valid;
+		}
 
 		//!
 		//! Clear the content of the table.
@@ -172,25 +175,37 @@ namespace ts
 		//! Fast access to the table id.
 		//! @return The table id.
 		//!
-		TID tableId() const { return _tid; }
+		TID tableId() const
+		{
+			return _tid;
+		}
 
 		//!
 		//! Fast access to the table id extension.
 		//! @return The table id extension.
 		//!
-		uint16_t tableIdExtension() const { return _tid_ext; }
+		uint16_t tableIdExtension() const
+		{
+			return _tid_ext;
+		}
 
 		//!
 		//! Fast access to the table version number.
 		//! @return The table version number.
 		//!
-		uint8_t version() const { return _version; }
+		uint8_t version() const
+		{
+			return _version;
+		}
 
 		//!
 		//! Fast access to the source PID.
 		//! @return The source PID.
 		//!
-		PID sourcePID() const { return _source_pid; }
+		PID sourcePID() const
+		{
+			return _source_pid;
+		}
 
 		//!
 		//! Set the table id of all sections in the table.
@@ -257,7 +272,7 @@ namespace ts
 		//! @param [in] index Index of the section to get.
 		//! @return A safe pointer to the section or a null pointer if the specified section is not present.
 		//!
-		const SectionPtr sectionAt(size_t index) const;
+		SectionPtr const sectionAt(size_t index) const;
 
 		//!
 		//! Check if this is a table with one short section.
@@ -269,15 +284,15 @@ namespace ts
 		virtual Standards definingStandards() const override;
 
 	private:
-		BinaryTable(const BinaryTable &table) = delete;
+		BinaryTable(BinaryTable const &table) = delete;
 
 		// Private fields
-		bool             _is_valid = false;
-		TID              _tid{ TID_NULL };
-		uint16_t         _tid_ext = 0;
-		uint8_t          _version = 0;
-		PID              _source_pid = PID_NULL;
-		int              _missing_count = 0;
+		bool _is_valid = false;
+		TID _tid{TID_NULL};
+		uint16_t _tid_ext = 0;
+		uint8_t _version = 0;
+		PID _source_pid = PID_NULL;
+		int _missing_count = 0;
 		SectionPtrVector _sections{};
 	};
-}
+} // namespace ts
