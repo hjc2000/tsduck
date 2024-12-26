@@ -1,7 +1,7 @@
 #pragma once
-#include<tsduck/TableOperator.h>
-#include<functional>
-#include<tsduck/handler/TableHandler.h>
+#include <functional>
+#include <tsduck/handler/TableHandler.h>
+#include <tsduck/TableOperator.h>
 
 namespace video
 {
@@ -33,9 +33,17 @@ namespace video
 		/// </summary>
 		ts::PIDSet _streams_pid_set;
 
-		virtual void HandlePatVersionChange(ts::PAT &pat) {}
-		virtual void HandlePmtVersionChange(ts::PMT &pmt, uint16_t source_pid) {}
-		virtual void HandleSdtVersionChange(ts::BinaryTable const &table) {}
+		virtual void HandlePatVersionChange(ts::PAT &pat)
+		{
+		}
+
+		virtual void HandlePmtVersionChange(ts::PMT &pmt, uint16_t source_pid)
+		{
+		}
+
+		virtual void HandleSdtVersionChange(ts::BinaryTable const &table)
+		{
+		}
 
 	public:
 		/// <summary>
@@ -46,4 +54,4 @@ namespace video
 		/// </summary>
 		std::function<void(ts::PAT const &current_pat, ts::PAT &new_pat)> _on_before_handling_new_version_pat;
 	};
-}
+} // namespace video

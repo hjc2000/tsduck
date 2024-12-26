@@ -1,4 +1,4 @@
-#include"tsduck/corrector/TSOutputCorrector.h"
+#include "tsduck/corrector/TSOutputCorrector.h"
 
 using namespace video;
 using namespace std;

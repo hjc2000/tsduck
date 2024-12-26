@@ -1,11 +1,13 @@
 #pragma once
-#include<base/container/Queue.h>
-#include<tsduck/interface/ITSPacketConsumer.h>
-#include<tsduck/interface/ITSPacketSource.h>
+#include <base/container/Queue.h>
+#include <tsduck/interface/ITSPacketConsumer.h>
+#include <tsduck/interface/ITSPacketSource.h>
 
 namespace video
 {
-	class TSPacketQueue :public ITSPacketConsumer, public ITSPacketSource
+	class TSPacketQueue :
+		public ITSPacketConsumer,
+		public ITSPacketSource
 	{
 	private:
 		base::Queue<ts::TSPacket> _packet_queue;
@@ -30,4 +32,4 @@ namespace video
 		/// </returns>
 		ITSPacketSource::ReadPacketResult ReadPacket(ts::TSPacket &packet) override;
 	};
-}
+} // namespace video

@@ -1,6 +1,6 @@
 #pragma once
-#include<tsduck/corrector/CCCorrector.h>
-#include<tsduck/corrector/TableRepeater.h>
+#include <tsduck/corrector/CCCorrector.h>
+#include <tsduck/corrector/TableRepeater.h>
 
 namespace video
 {
@@ -16,17 +16,17 @@ namespace video
 		TSOutputCorrector();
 
 	private:
-		shared_ptr<CCCorrector> _cccorrect{ new CCCorrector{} };
-		shared_ptr<TableRepeater> _repeater{ new TableRepeater{} };
+		shared_ptr<CCCorrector> _cccorrect{new CCCorrector{}};
+		shared_ptr<TableRepeater> _repeater{new TableRepeater{}};
 
 	public:
-		#pragma region 通过 IPipeTsPacketSource 继承
+#pragma region 通过 IPipeTsPacketSource 继承
 		void AddTsPacketConsumer(shared_ptr<ITSPacketConsumer> packet_comsumer) override;
 		bool RemovePacketConsumer(shared_ptr<ITSPacketConsumer> packet_comsumer) override;
 		void ClearConsumers() override;
-		#pragma endregion
+#pragma endregion
 
 		using ITSPacketConsumer::SendPacket;
 		void SendPacket(ts::TSPacket *packet) override;
 	};
-}
+} // namespace video

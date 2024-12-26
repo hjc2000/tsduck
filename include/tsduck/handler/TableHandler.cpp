@@ -2,15 +2,21 @@
 
 video::TableHandler::TableHandler()
 {
-	_duck = shared_ptr<ts::DuckContext>{ new ts::DuckContext{&ts::CerrReport::Instance()} };
+	_duck = shared_ptr<ts::DuckContext>{
+		new ts::DuckContext{
+			&ts::CerrReport::Instance(),
+		},
+	};
+
 	_demux = shared_ptr<ts::SectionDemux>{
 		new ts::SectionDemux{
 			*_duck,
 			nullptr,
 			nullptr,
-			ts::PIDSet{}
-		}
+			ts::PIDSet{},
+		},
 	};
+
 	_default_listened_pid_set[0] = 1;
 	_default_listened_pid_set[0x11] = 1;
 	_demux->setPIDFilter(_default_listened_pid_set);

@@ -1,13 +1,11 @@
-#include"tsduck/changer/AutoPidChanger.h"
-#include<PidChanger.h>
+#include "tsduck/changer/AutoPidChanger.h"
+#include <PidChanger.h>
 
 using namespace std;
 using namespace video;
 
-video::AutoPidChanger::AutoPidChanger(
-	shared_ptr<PidProvider> pid_provider,
-	std::map<uint16_t, uint16_t> const &preset_pid_map
-)
+video::AutoPidChanger::AutoPidChanger(shared_ptr<PidProvider> pid_provider,
+									  std::map<uint16_t, uint16_t> const &preset_pid_map)
 {
 	_pid_provider = pid_provider;
 	_preset_pid_map = preset_pid_map;
@@ -20,8 +18,8 @@ video::AutoPidChanger::AutoPidChanger(
 void video::AutoPidChanger::HandlePatVersionChange(ts::PAT &pat)
 {
 	/* 遍历 _final_pid_map，找出 _preset_pid_map 中没有的，归还映射到的目标 PID。
-	* 注意，映射到的目标 PID 是迭代器的 second 字段。
-	*/
+	 * 注意，映射到的目标 PID 是迭代器的 second 字段。
+	 */
 	for (auto &it : _final_pid_map)
 	{
 		if (_preset_pid_map.find(it.first) == _preset_pid_map.end())
@@ -39,7 +37,7 @@ void video::AutoPidChanger::HandlePatVersionChange(ts::PAT &pat)
 		}
 	}
 
-	_pid_changer = shared_ptr<PidChanger>{ new PidChanger{_final_pid_map} };
+	_pid_changer = shared_ptr<PidChanger>{new PidChanger{_final_pid_map}};
 	_pid_changer->AddTsPacketConsumerFromAnother(*this);
 	_pid_changer->SendPacket(TableOperator::ToTsPacket(*_duck, pat));
 }
@@ -59,6 +57,7 @@ void video::AutoPidChanger::HandlePmtVersionChange(ts::PMT &pmt, uint16_t source
 }
 
 #pragma region PipeTsPacketSource
+
 void video::AutoPidChanger::AddTsPacketConsumer(shared_ptr<ITSPacketConsumer> packet_comsumer)
 {
 	PipeTsPacketSource::AddTsPacketConsumer(packet_comsumer);
@@ -88,6 +87,7 @@ void video::AutoPidChanger::ClearConsumers()
 		_pid_changer->ClearConsumers();
 	}
 }
+
 #pragma endregion
 
 void video::AutoPidChanger::SendPacket(ts::TSPacket *packet)

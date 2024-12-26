@@ -1,10 +1,10 @@
 #pragma once
-#include<tsDuckContext.h>
-#include<tsSectionDemux.h>
-#include<tsduck/PipeTsPacketSource.h>
-#include<tsduck/TableOperator.h>
-#include<tsduck/handler/TableVersionChangeHandler.h>
-#include<tsduck/interface/ITSPacketConsumer.h>
+#include <tsduck/handler/TableVersionChangeHandler.h>
+#include <tsduck/interface/ITSPacketConsumer.h>
+#include <tsduck/PipeTsPacketSource.h>
+#include <tsduck/TableOperator.h>
+#include <tsDuckContext.h>
+#include <tsSectionDemux.h>
 
 namespace video
 {
@@ -41,4 +41,4 @@ namespace video
 		int64_t RepeatPatPmtIntervalInMillisecond();
 		void SetRepeatPatPmtIntervalInMillisecond(int64_t value);
 	};
-}
+} // namespace video

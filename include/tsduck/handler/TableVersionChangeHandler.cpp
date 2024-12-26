@@ -1,4 +1,4 @@
-#include"tsduck/handler/TableVersionChangeHandler.h"
+#include "tsduck/handler/TableVersionChangeHandler.h"
 
 void video::TableVersionChangeHandler::HandlePAT(ts::BinaryTable const &table)
 {

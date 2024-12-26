@@ -1,4 +1,4 @@
-#include"tsduck/corrector/TableRepeater.h"
+#include "tsduck/corrector/TableRepeater.h"
 
 using namespace std;
 
@@ -67,7 +67,7 @@ void video::TableRepeater::SetRepeatPatPmtIntervalInMillisecond(int64_t value)
 {
 	if (value <= 0)
 	{
-		throw std::invalid_argument{ CODE_POS_STR + std::string{"设置的间隔不允许小于等于 0."} };
+		throw std::invalid_argument{CODE_POS_STR + std::string{"设置的间隔不允许小于等于 0."}};
 	}
 
 	_repeat_table_interval_in_milliseconds = value;

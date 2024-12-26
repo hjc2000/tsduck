@@ -1,7 +1,7 @@
 #pragma once
-#include<tsduck/ServiceIdProvider.h>
-#include<tsduck/corrector/TableRepeater.h>
-#include<tsduck/handler/TableVersionChangeHandler.h>
+#include <tsduck/corrector/TableRepeater.h>
+#include <tsduck/handler/TableVersionChangeHandler.h>
+#include <tsduck/ServiceIdProvider.h>
 
 namespace video
 {
@@ -15,14 +15,13 @@ namespace video
 	{
 	public:
 		/// <summary>
-		///		
+		///
 		/// </summary>
 		/// <param name="service_id_provider"></param>
 		/// <param name="preset_map">会尽量使用此映射表，如果有冲突，就使用自动分配的值。</param>
 		AutoServiceIdChanger(
 			shared_ptr<ServiceIdProvider> service_id_provider,
-			std::map<uint16_t, uint16_t> const &preset_map = std::map<uint16_t, uint16_t>{}
-		);
+			std::map<uint16_t, uint16_t> const &preset_map = std::map<uint16_t, uint16_t>{});
 
 	private:
 		class ServiceIdChanger;
@@ -36,4 +35,4 @@ namespace video
 	public:
 		void SendPacket(ts::TSPacket *packet) override;
 	};
-}
+} // namespace video

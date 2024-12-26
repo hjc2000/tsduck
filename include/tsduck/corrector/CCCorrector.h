@@ -1,10 +1,10 @@
 #pragma once
-#include<base/Counter.h>
-#include<map>
-#include<memory>
-#include<tsduck/interface/ITSPacketConsumer.h>
-#include<tsduck/PipeTsPacketSource.h>
-#include<tsTSPacket.h>
+#include <base/Counter.h>
+#include <map>
+#include <memory>
+#include <tsduck/interface/ITSPacketConsumer.h>
+#include <tsduck/PipeTsPacketSource.h>
+#include <tsTSPacket.h>
 
 using std::shared_ptr;
 
@@ -12,10 +12,10 @@ namespace video
 {
 	/// <summary>
 	///		连续性计数校正器。输入的包的连续性计数会被修改，让它变成连续的。
-	///		
+	///
 	///		* 如果某个包有非连续指示，则会将本对象内部的计数器的值设置为该包的计数值。
 	/// </summary>
-	class CCCorrector :public ITSPacketConsumer, public PipeTsPacketSource
+	class CCCorrector : public ITSPacketConsumer, public PipeTsPacketSource
 	{
 	private:
 		/// <summary>
@@ -33,4 +33,4 @@ namespace video
 		using ITSPacketConsumer::SendPacket;
 		void SendPacket(ts::TSPacket *packet) override;
 	};
-}
+} // namespace video

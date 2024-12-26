@@ -1,10 +1,10 @@
 #pragma once
-#include<tsBinaryTable.h>
-#include<tsCerrReport.h>
-#include<tsDuckContext.h>
-#include<tsPAT.h>
-#include<tsPMT.h>
-#include<tsSectionDemux.h>
+#include <tsBinaryTable.h>
+#include <tsCerrReport.h>
+#include <tsDuckContext.h>
+#include <tsPAT.h>
+#include <tsPMT.h>
+#include <tsSectionDemux.h>
 
 using std::shared_ptr;
 
@@ -19,7 +19,10 @@ namespace video
 	{
 	public:
 		TableHandler();
-		virtual ~TableHandler() {}
+
+		virtual ~TableHandler()
+		{
+		}
 
 	private:
 		void handleTable(ts::SectionDemux &demux, ts::BinaryTable const &table) final override;
@@ -29,9 +32,17 @@ namespace video
 		shared_ptr<ts::DuckContext> _duck;
 		shared_ptr<ts::SectionDemux> _demux;
 
-		virtual void HandlePAT(ts::BinaryTable const &table) {}
-		virtual void HandlePMT(ts::BinaryTable const &table) {}
-		virtual void HandleSDT(ts::BinaryTable const &table) {}
+		virtual void HandlePAT(ts::BinaryTable const &table)
+		{
+		}
+
+		virtual void HandlePMT(ts::BinaryTable const &table)
+		{
+		}
+
+		virtual void HandleSDT(ts::BinaryTable const &table)
+		{
+		}
 
 		/// <summary>
 		///		重置监听的 PID。重置后将会仅监听几个默认的 PID。
@@ -44,4 +55,4 @@ namespace video
 		/// <param name="pat"></param>
 		void ListenOnPmtPids(ts::PAT const &pat);
 	};
-}
+} // namespace video

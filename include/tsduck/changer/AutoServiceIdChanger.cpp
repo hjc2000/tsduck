@@ -1,10 +1,10 @@
-#include"tsduck/changer/AutoServiceIdChanger.h"
+#include "tsduck/changer/AutoServiceIdChanger.h"
 
 using namespace video;
 using namespace std;
 
-
 #pragma region 内部类型
+
 class video::AutoServiceIdChanger::ServiceIdChanger :
 	public ITSPacketConsumer,
 	public PipeTsPacketSource,
@@ -41,7 +41,7 @@ private:
 	{
 		ts::SDT sdt;
 		sdt.deserialize(*_duck, table);
-		ts::SDT backup_sdt{ sdt };
+		ts::SDT backup_sdt{sdt};
 		for (auto &map_pair : _service_id_map)
 		{
 			auto it = sdt.services.find(map_pair.first);
@@ -66,7 +66,7 @@ private:
 	void ChangeServiceIdInPat(ts::PAT &pat)
 	{
 		// 备份字典。
-		std::map<uint16_t, uint16_t> backup_pmts{ pat.pmts };
+		std::map<uint16_t, uint16_t> backup_pmts{pat.pmts};
 
 		// 遍历映射表，找出哪些键是 pat.pmts 里确实有的，将它们从 pat.pmts 中移除。
 		for (auto &map_pair : _service_id_map)
@@ -93,6 +93,7 @@ private:
 
 public:
 	using ITSPacketConsumer::SendPacket;
+
 	void SendPacket(ts::TSPacket *packet) override
 	{
 		_demux->feedPacket(*packet);
@@ -102,16 +103,12 @@ public:
 		}
 	}
 };
+
 #pragma endregion
-
-
-
-
 
 video::AutoServiceIdChanger::AutoServiceIdChanger(
 	shared_ptr<ServiceIdProvider> service_id_provider,
-	std::map<uint16_t, uint16_t> const &preset_map
-)
+	std::map<uint16_t, uint16_t> const &preset_map)
 {
 	_service_id_provider = service_id_provider;
 	_preset_service_id_map = preset_map;
@@ -144,7 +141,7 @@ void video::AutoServiceIdChanger::HandlePatVersionChange(ts::PAT &pat)
 	}
 
 	// 得到最终的 _service_id_map 后，重新构造 _service_id_changer。
-	_service_id_changer = shared_ptr<ServiceIdChanger>{ new ServiceIdChanger{_final_service_id_map} };
+	_service_id_changer = shared_ptr<ServiceIdChanger>{new ServiceIdChanger{_final_service_id_map}};
 	_service_id_changer->AddTsPacketConsumerFromAnother(*this);
 	_service_id_changer->SendPacket(TableOperator::ToTsPacket(*_duck, pat));
 }
@@ -156,7 +153,6 @@ void video::AutoServiceIdChanger::SendPacket(ts::TSPacket *packet)
 	{
 		if (packet->getPID() == 0)
 		{
-
 		}
 		else
 		{
