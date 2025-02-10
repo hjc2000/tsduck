@@ -1,11 +1,11 @@
 #pragma once
-#include <base/stream/FileStream.h>
-#include <tsDuckContext.h>
-#include <tsduck/TSDumper.h>
-#include <tsduck/TableOperator.h>
+#include <base/stream/IFileStream.h>
 #include <tsduck/corrector/TSOutputCorrector.h>
 #include <tsduck/io/TSPacketStreamWriter.h>
 #include <tsduck/mux/AutoChangeIdProgramMux.h>
+#include <tsduck/TableOperator.h>
+#include <tsduck/TSDumper.h>
+#include <tsDuckContext.h>
 
 namespace video
 {
@@ -32,7 +32,7 @@ namespace video
 		shared_ptr<ts::DuckContext> _duck;
 
 		shared_ptr<TSOutputCorrector> _output_corrector{new TSOutputCorrector{}};
-		shared_ptr<TSPacketStreamWriter> _ts_packet_to_stream{new TSPacketStreamWriter{base::FileStream::CreateNewAnyway("out.ts")}};
+		shared_ptr<TSPacketStreamWriter> _ts_packet_to_stream{new TSPacketStreamWriter{base::di::filesystem::CreateNewAnyway("out.ts")}};
 
 		shared_ptr<TSDumper> _packet_dumper{new TSDumper{"ts-dump.txt"}};
 		shared_ptr<AutoChangeIdProgramMux> _auto_change_id_program_mux{new AutoChangeIdProgramMux{}};
@@ -41,10 +41,11 @@ namespace video
 
 	public:
 		using ITSPacketConsumer::SendPacket;
+
 		void SendPacket(ts::TSPacket *packet) override
 		{
 			_input_port->SendPacket(packet);
 			_input_port1->SendPacket(packet);
 		}
 	};
-}
+} // namespace video

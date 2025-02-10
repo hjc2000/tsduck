@@ -1,5 +1,5 @@
 #include "test_tsduck.h"
-#include <base/stream/FileStream.h>
+#include <base/stream/IFileStream.h>
 #include <base/task/CancellationTokenSource.h>
 #include <filesystem>
 #include <tsCerrReport.h>
@@ -27,7 +27,7 @@ void test_tsduck()
 			return;
 		}
 
-		shared_ptr<base::FileStream> input_file_stream = base::FileStream::Open(file_name.c_str());
+		shared_ptr<base::IFileStream> input_file_stream = base::di::filesystem::OpenExisting(file_name.c_str());
 		shared_ptr<TSPacketStreamReader> ts_packet_reader{new TSPacketStreamReader{input_file_stream}};
 		joined_ts_stream.AddSource(ts_packet_reader);
 	};
