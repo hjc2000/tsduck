@@ -24,7 +24,7 @@ void test_tsduck()
 			return;
 		}
 
-		shared_ptr<base::IFileStream> input_file_stream = base::di::filesystem::OpenExisting(file_name.c_str());
+		shared_ptr<base::IFileStream> input_file_stream = base::di::file::OpenExisting(file_name.c_str());
 		shared_ptr<video::TSPacketStreamReader> ts_packet_reader{new video::TSPacketStreamReader{input_file_stream}};
 		joined_ts_stream.AddSource(ts_packet_reader);
 	};

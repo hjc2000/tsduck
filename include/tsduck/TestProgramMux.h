@@ -32,7 +32,7 @@ namespace video
 		shared_ptr<ts::DuckContext> _duck;
 
 		shared_ptr<TSOutputCorrector> _output_corrector{new TSOutputCorrector{}};
-		shared_ptr<TSPacketStreamWriter> _ts_packet_to_stream{new TSPacketStreamWriter{base::di::filesystem::CreateNewAnyway("out.ts")}};
+		shared_ptr<TSPacketStreamWriter> _ts_packet_to_stream{new TSPacketStreamWriter{base::di::file::CreateNewAnyway("out.ts")}};
 
 		shared_ptr<TSDumper> _packet_dumper{new TSDumper{"ts-dump.txt"}};
 		shared_ptr<AutoChangeIdProgramMux> _auto_change_id_program_mux{new AutoChangeIdProgramMux{}};
