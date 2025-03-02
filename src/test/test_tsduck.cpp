@@ -1,7 +1,6 @@
 #include "test_tsduck.h"
 #include <base/stream/IFileStream.h>
 #include <base/task/CancellationTokenSource.h>
-#include <filesystem>
 #include <tsCerrReport.h>
 #include <tsduck/io/TSPacketStreamReader.h>
 #include <tsduck/mux/JoinedTsStream.h>
