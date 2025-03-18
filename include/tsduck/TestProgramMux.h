@@ -1,5 +1,5 @@
 #pragma once
-#include <base/stream/IFileStream.h>
+#include <base/file/IFileStream.h>
 #include <tsduck/corrector/TSOutputCorrector.h>
 #include <tsduck/io/TSPacketStreamWriter.h>
 #include <tsduck/mux/AutoChangeIdProgramMux.h>
@@ -32,7 +32,7 @@ namespace video
 		shared_ptr<ts::DuckContext> _duck;
 
 		shared_ptr<TSOutputCorrector> _output_corrector{new TSOutputCorrector{}};
-		shared_ptr<TSPacketStreamWriter> _ts_packet_to_stream{new TSPacketStreamWriter{base::di::file::CreateNewAnyway("out.ts")}};
+		shared_ptr<TSPacketStreamWriter> _ts_packet_to_stream{new TSPacketStreamWriter{base::file::CreateNewAnyway("out.ts")}};
 
 		shared_ptr<TSDumper> _packet_dumper{new TSDumper{"ts-dump.txt"}};
 		shared_ptr<AutoChangeIdProgramMux> _auto_change_id_program_mux{new AutoChangeIdProgramMux{}};
