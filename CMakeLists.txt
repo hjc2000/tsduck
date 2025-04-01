@@ -13,10 +13,6 @@ if(1)
 endif()
 
 
-include(target_import_base)
-
-
-
 # 定义生成规则
 add_library(${ProjectName})
 
