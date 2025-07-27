@@ -1,5 +1,5 @@
 #pragma once
-#include <base/Counter.h>
+#include "base/math/Counter.h"
 #include <map>
 #include <memory>
 #include <tsduck/interface/ITSPacketConsumer.h>

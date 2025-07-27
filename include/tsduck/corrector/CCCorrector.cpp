@@ -6,7 +6,7 @@ void video::CCCorrector::CorrectCC(ts::TSPacket &packet)
 	if (_counter_map[pid] == nullptr)
 	{
 		// 此 PID 第一次送入包
-		_counter_map[pid] = shared_ptr<base::Counter<uint8_t>>{new base::Counter<uint8_t>{15}};
+		_counter_map[pid] = shared_ptr<base::Counter<uint8_t>>{new base::Counter<uint8_t>{0, 15}};
 		_counter_map[pid]->SetCurrentValue(packet.getCC());
 		return;
 	}
