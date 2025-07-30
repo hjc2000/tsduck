@@ -12,6 +12,8 @@ namespace video
 	class IPipeTsPacketSource
 	{
 	public:
+		virtual ~IPipeTsPacketSource() = default;
+
 		/// <summary>
 		///		添加一个包消费者
 		/// </summary>

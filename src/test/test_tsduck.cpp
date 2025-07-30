@@ -1,5 +1,5 @@
 #include "test_tsduck.h"
-#include <base/file/IFileStream.h>
+#include <base/filesystem/IFileStream.h>
 #include <base/task/CancellationTokenSource.h>
 #include <tsCerrReport.h>
 #include <tsduck/io/TSPacketStreamReader.h>
