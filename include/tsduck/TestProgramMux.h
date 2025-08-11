@@ -1,5 +1,5 @@
 #pragma once
-#include <base/filesystem/IFileStream.h>
+#include <base/filesystem/file.h>
 #include <tsduck/corrector/TSOutputCorrector.h>
 #include <tsduck/io/TSPacketStreamWriter.h>
 #include <tsduck/mux/AutoChangeIdProgramMux.h>
