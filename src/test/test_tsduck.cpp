@@ -1,6 +1,8 @@
 #include "test_tsduck.h"
+#include "base/Placement.h"
 #include <base/filesystem/file.h>
 #include <base/task/CancellationTokenSource.h>
+#include <string>
 #include <tsCerrReport.h>
 #include <tsduck/io/TSPacketStreamReader.h>
 #include <tsduck/mux/JoinedTsStream.h>
@@ -17,12 +19,14 @@ void test_tsduck()
 	video::JoinedTsStream joined_ts_stream;
 	joined_ts_stream._on_ts_packet_source_list_exhausted = [&]()
 	{
-		std::string file_name;
-		if (!file_queue.TryDequeue(file_name))
+		base::Placement<std::string> file_name_placement;
+		file_queue.TryDequeue(file_name_placement);
+		if (!file_name_placement.Available())
 		{
 			return;
 		}
 
+		std::string file_name = file_name_placement.Object();
 		shared_ptr<base::Stream> input_file_stream = base::file::OpenExisting(file_name.c_str());
 		shared_ptr<video::TSPacketStreamReader> ts_packet_reader{new video::TSPacketStreamReader{input_file_stream}};
 		joined_ts_stream.AddSource(ts_packet_reader);

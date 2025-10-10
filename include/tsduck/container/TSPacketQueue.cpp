@@ -1,4 +1,5 @@
 #include "tsduck/container/TSPacketQueue.h"
+#include "base/Placement.h"
 
 using namespace video;
 using namespace std;
@@ -21,9 +22,11 @@ void video::TSPacketQueue::SendPacket(ts::TSPacket *packet)
 
 ITSPacketSource::ReadPacketResult video::TSPacketQueue::ReadPacket(ts::TSPacket &packet)
 {
-	bool dequeue_result = _packet_queue.TryDequeue(packet);
-	if (dequeue_result)
+	base::Placement<ts::TSPacket> packet_placement;
+	_packet_queue.TryDequeue(packet_placement);
+	if (packet_placement.Available())
 	{
+		packet = packet_placement.Object();
 		return ITSPacketSource::ReadPacketResult::Success;
 	}
 
