@@ -7,7 +7,7 @@ void video::CCCorrector::CorrectCC(ts::TSPacket &packet)
 	{
 		// 此 PID 第一次送入包
 		_counter_map[pid] = shared_ptr<base::Counter<uint8_t>>{new base::Counter<uint8_t>{0, 15}};
-		_counter_map[pid]->SetCurrentValue(packet.getCC());
+		_counter_map[pid]->SetValue(packet.getCC());
 		return;
 	}
 
@@ -16,7 +16,7 @@ void video::CCCorrector::CorrectCC(ts::TSPacket &packet)
 	if (packet.getDiscontinuityIndicator())
 	{
 		// 存在不连续指示
-		counter.SetCurrentValue(packet.getCC());
+		counter.SetValue(packet.getCC());
 	}
 	else
 	{
