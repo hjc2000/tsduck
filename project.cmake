@@ -1,4 +1,4 @@
-add_library(${ProjectName} STATIC)
+add_library(${ProjectName} OBJECT)
 
 # 将资源目录用预定义传给 C++ 程序
 target_compile_definitions(${ProjectName} PRIVATE TS_NO_SRT=1)
